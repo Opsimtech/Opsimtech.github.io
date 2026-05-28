@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page not found · OpSimTech</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      html, body {
+        background: #000;
+        color: #e6e8eb;
+        font-family: 'Geist', system-ui, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+      }
+      .dot-bg {
+        position: fixed; inset: 0; pointer-events: none;
+        background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+        background-size: 24px 24px;
+        z-index: 0;
+      }
+      .wrap {
+        position: relative; z-index: 1;
+        max-width: 720px;
+        margin: 0 auto;
+        padding: clamp(64px, 12vw, 140px) 24px;
+        min-height: 100vh;
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      .eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #1ae0b5;
+        margin-bottom: 28px;
+        display: inline-flex; align-items: center; gap: 14px;
+      }
+      .eyebrow::before {
+        content: ''; width: 36px; height: 1px; background: #1ae0b5;
+      }
+      h1 {
+        font-size: clamp(56px, 11vw, 140px);
+        font-weight: 700;
+        line-height: 0.92;
+        letter-spacing: -0.022em;
+        margin: 0 0 8px;
+        background: linear-gradient(135deg, #83f2a1, #1ae0b5 45%, #45c1ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      h2 {
+        font-size: clamp(22px, 2.6vw, 30px);
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+        margin: 0 0 20px;
+      }
+      p {
+        font-size: 17px;
+        color: #9aa0a8;
+        line-height: 1.55;
+        max-width: 520px;
+        margin: 0 0 36px;
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+      .btn {
+        font-family: 'Geist', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 14px 22px;
+        border-radius: 999px;
+        text-decoration: none;
+        display: inline-flex; align-items: center; gap: 8px;
+        transition: all 0.15s ease;
+      }
+      .btn-primary { background: #1ae0b5; color: #000; }
+      .btn-primary:hover { background: #83f2a1; }
+      .btn-ghost {
+        background: transparent;
+        color: #e6e8eb;
+        border: 1px solid rgba(255,255,255,0.18);
+      }
+      .btn-ghost:hover { border-color: #1ae0b5; color: #1ae0b5; }
+      .footer-line {
+        margin-top: 64px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: #6c7480;
+        letter-spacing: 0.04em;
+      }
+      .footer-line a { color: #9aa0a8; text-decoration: none; }
+      .footer-line a:hover { color: #1ae0b5; }
+    </style>
+  </head>
+  <body>
+    <div class="dot-bg"></div>
+    <main class="wrap">
+      <div class="eyebrow">404 · Page Not Found</div>
+      <h1>404</h1>
+      <h2>This page doesn't exist — or hasn't been published yet.</h2>
+      <p>
+        The URL you followed may be outdated or the page may have moved.
+        Head back to the homepage, or jump straight to what you were looking for.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/">← Back to home</a>
+        <a class="btn btn-ghost" href="/method.html">Method</a>
+        <a class="btn btn-ghost" href="/request-demo.html">Request a demo</a>
+      </div>
+      <div class="footer-line">
+        OpSimTech · Physics-first. AI-accelerated. Decision-ready.
+      </div>
+    </main>
+  </body>
+</html>

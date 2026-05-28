@@ -1,0 +1,2467 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimTech — Industrial Digital Twins Powered by Physics-AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg:           #0a0e1a;
+        --bg-2:         #0e1325;
+        --bg-3:         #131a30;
+        --bg-card:      #161e36;
+        --line:         #1f2942;
+        --line-soft:    #182238;
+        --text:         #ffffff;
+        --text-2:       #cfd6e4;
+        --text-3:       #8b95ac;
+        --text-4:       #5b6580;
+        --blue:         #0066ff;
+        --blue-bright:  #2b85ff;
+        --blue-soft:    rgba(0, 102, 255, 0.10);
+        --orange:       #ff6b00;
+        --orange-soft:  rgba(255, 107, 0, 0.10);
+        --grad:         linear-gradient(135deg, #0066ff, #2b85ff);
+        --grad-mix:     linear-gradient(135deg, #ff6b00, #0066ff);
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      h1, h2, h3, h4, h5 {
+        font-family: 'Space Grotesk', sans-serif;
+        letter-spacing: -0.025em;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.05;
+        text-wrap: balance;
+      }
+      a { color: inherit; text-decoration: none; }
+      p { margin: 0; }
+      button { font-family: inherit; }
+      .mono {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-4);
+        font-weight: 500;
+      }
+      .container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+
+      /* ───────── GLOBAL MESH BG (sits on body, visible at top only) ───────── */
+      .mesh-bg {
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 0;
+        background:
+          linear-gradient(to right, var(--line-soft) 1px, transparent 1px) 0 0 / 80px 100%,
+          linear-gradient(to bottom, var(--line-soft) 1px, transparent 1px) 0 0 / 100% 80px;
+        opacity: 0.35;
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 80%);
+        -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 80%);
+      }
+      .glow-blue {
+        position: absolute;
+        width: 720px;
+        height: 720px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 102, 255, 0.18) 0%, transparent 65%);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .glow-orange {
+        position: absolute;
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 107, 0, 0.10) 0%, transparent 65%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ───────── NAV ───────── */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(10, 14, 26, 0.78);
+        backdrop-filter: saturate(140%) blur(16px);
+        -webkit-backdrop-filter: saturate(140%) blur(16px);
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .nav-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 14px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; }
+      .brand .wm {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+      }
+      .nav-link {
+        font-size: 13.5px;
+        color: var(--text-2);
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.15s;
+        background: none;
+        border: 0;
+        padding: 0;
+      }
+      .nav-link:hover { color: var(--blue-bright); }
+      .nav-link svg { width: 13px; height: 13px; }
+      .dropdown { position: relative; }
+      .dropdown-panel {
+        position: absolute;
+        left: -16px;
+        top: calc(100% + 8px);
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        min-width: 320px;
+        padding: 8px 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+        box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+      }
+      .dropdown:hover .dropdown-panel,
+      .dropdown:focus-within .dropdown-panel {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .dropdown-item {
+        display: block;
+        padding: 10px 16px;
+        font-size: 13.5px;
+        color: var(--text-2);
+        transition: color 0.12s, background 0.12s;
+      }
+      .dropdown-item:hover {
+        color: var(--blue-bright);
+        background: rgba(0, 102, 255, 0.05);
+      }
+      .nav-cta {
+        background: var(--blue);
+        color: white;
+        font-weight: 600;
+        font-size: 13.5px;
+        padding: 10px 18px;
+        border-radius: 8px;
+        transition: background 0.15s, transform 0.15s;
+      }
+      .nav-cta:hover { background: var(--blue-bright); transform: translateY(-1px); }
+      .nav-mobile {
+        display: none;
+        background: none;
+        border: 0;
+        color: var(--text-2);
+        cursor: pointer;
+      }
+
+      /* ───────── BUTTONS ───────── */
+      .btn-primary {
+        background: var(--blue);
+        color: white;
+        padding: 15px 26px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.15s, transform 0.15s;
+        cursor: pointer;
+        border: 0;
+      }
+      .btn-primary:hover { background: var(--blue-bright); transform: translateY(-1px); }
+      .btn-orange {
+        background: var(--orange);
+        color: white;
+        padding: 15px 26px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.15s, transform 0.15s;
+        cursor: pointer;
+        border: 0;
+      }
+      .btn-orange:hover { background: #ff8030; transform: translateY(-1px); }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text);
+        padding: 15px 26px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 15px;
+        border: 1px solid var(--line);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: border-color 0.15s, background 0.15s;
+        cursor: pointer;
+      }
+      .btn-ghost:hover { border-color: var(--blue-bright); background: var(--blue-soft); }
+      .arrow::after { content: '→'; font-family: 'Space Grotesk', sans-serif; }
+
+      /* ───────── SECTION COMMONS ───────── */
+      .sec { padding: 120px 0; position: relative; }
+      .sec.compact { padding: 96px 0; }
+      .sec-head {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+        margin-bottom: 64px;
+        align-items: start;
+      }
+      .sec-eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--blue-bright);
+        padding-top: 6px;
+      }
+      .sec-eyebrow.orange { color: var(--orange); }
+      .sec-head h2 {
+        font-size: clamp(34px, 4.4vw, 60px);
+        line-height: 1.04;
+        max-width: 940px;
+        font-weight: 600;
+      }
+      .sec-head .lead {
+        margin-top: 24px;
+        font-size: 17px;
+        color: var(--text-2);
+        max-width: 760px;
+        line-height: 1.55;
+      }
+      .gradient-text {
+        background: var(--grad-mix);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+      .blue-text { color: var(--blue-bright); }
+      .orange-text { color: var(--orange); }
+
+      /* ───────── HERO ───────── */
+      .hero {
+        position: relative;
+        padding: 100px 0 120px;
+        overflow: hidden;
+      }
+      .hero .glow-blue { top: -200px; left: -200px; }
+      .hero .glow-orange { bottom: -100px; right: -100px; }
+      .hero-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+        align-items: center;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(0, 102, 255, 0.3);
+        background: var(--blue-soft);
+        backdrop-filter: blur(6px);
+        padding: 7px 14px;
+        border-radius: 999px;
+        margin-bottom: 28px;
+      }
+      .hero-badge .dot {
+        width: 7px;
+        height: 7px;
+        background: var(--blue-bright);
+        border-radius: 50%;
+        box-shadow: 0 0 12px var(--blue);
+        animation: pulse 2s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+      .hero-badge .label {
+        font-size: 12.5px;
+        color: var(--blue-bright);
+        font-weight: 500;
+      }
+      .hero h1 {
+        font-size: clamp(2.4rem, 5vw, 4.4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.02;
+        margin-bottom: 28px;
+      }
+      .hero h1 .accent {
+        background: var(--grad-mix);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero-sub {
+        font-size: clamp(16px, 1.4vw, 18px);
+        color: var(--text-2);
+        max-width: 580px;
+        line-height: 1.55;
+        margin-bottom: 40px;
+      }
+      .hero-cta-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 56px;
+      }
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        max-width: 560px;
+        padding-top: 32px;
+        border-top: 1px solid var(--line);
+      }
+      .hero-stat .v {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(22px, 2.4vw, 30px);
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+      .hero-stat .v .unit {
+        font-size: 0.55em;
+        color: var(--text-3);
+        font-weight: 500;
+        margin-left: 2px;
+      }
+      .hero-stat .l {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        color: var(--text-4);
+        margin-top: 8px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      /* ───── VIDEO HERO SLOT (right side) ───── */
+      .video-hero {
+        position: relative;
+        aspect-ratio: 16 / 11;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: linear-gradient(180deg, var(--bg-2), var(--bg-3));
+        overflow: hidden;
+        box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.7),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+      .video-hero .vh-canvas {
+        position: absolute;
+        inset: 0;
+      }
+      .video-hero .vh-canvas svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .video-hero .vh-overlay {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 45%, rgba(0, 102, 255, 0.15) 0%, transparent 60%),
+          linear-gradient(180deg, rgba(10, 14, 26, 0.3) 0%, rgba(10, 14, 26, 0.85) 100%);
+      }
+      .video-hero .vh-content {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        padding: 24px;
+      }
+      .vh-play {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.18s, transform 0.18s, border-color 0.18s;
+        position: relative;
+      }
+      .vh-play:hover {
+        background: rgba(0, 102, 255, 0.18);
+        border-color: var(--blue-bright);
+        transform: scale(1.05);
+      }
+      .vh-play::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 102, 255, 0.2);
+        animation: ring 2.4s linear infinite;
+      }
+      @keyframes ring {
+        0% { opacity: 0.8; transform: scale(0.95); }
+        100% { opacity: 0; transform: scale(1.25); }
+      }
+      .vh-play svg {
+        margin-left: 4px;
+        color: white;
+      }
+      .vh-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-3);
+      }
+      .vh-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 19px;
+        font-weight: 600;
+        color: var(--text);
+        text-align: center;
+        letter-spacing: -0.01em;
+      }
+      .vh-soon {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--orange);
+        padding: 5px 10px;
+        background: var(--orange-soft);
+        border: 1px solid rgba(255, 107, 0, 0.25);
+        border-radius: 4px;
+        margin-top: 2px;
+      }
+      .video-hero .vh-corner {
+        position: absolute;
+        top: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--text-4);
+        text-transform: uppercase;
+      }
+      .vh-corner.tl { left: 16px; }
+      .vh-corner.tr { right: 16px; color: var(--blue-bright); }
+      .vh-corner.bl { bottom: 16px; left: 16px; top: auto; }
+      .vh-corner.br { bottom: 16px; right: 16px; top: auto; }
+
+      /* ───────── TECHNOLOGY (3-layer architecture) ───────── */
+      .tech { background: var(--bg-2); }
+      .tech-stack {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .tech-layer {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--bg-3);
+        padding: 32px 36px;
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        gap: 28px;
+        align-items: center;
+        overflow: hidden;
+      }
+      .tech-layer::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+      }
+      .tech-layer.l1::before { background: var(--orange); }
+      .tech-layer.l2::before { background: linear-gradient(180deg, var(--orange), var(--blue)); }
+      .tech-layer.l3::before { background: var(--blue); }
+      .tech-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: var(--text-4);
+        letter-spacing: 0.14em;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .tech-layer h3 {
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: -0.018em;
+        margin-bottom: 8px;
+      }
+      .tech-layer p {
+        font-size: 14.5px;
+        color: var(--text-3);
+        max-width: 620px;
+        line-height: 1.55;
+      }
+      .tech-tags {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+      }
+      .tech-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 5px 10px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        color: var(--text-2);
+      }
+      .tech-tag.blue { color: var(--blue-bright); border-color: rgba(0, 102, 255, 0.3); background: var(--blue-soft); }
+      .tech-tag.orange { color: var(--orange); border-color: rgba(255, 107, 0, 0.3); background: var(--orange-soft); }
+      .tech-visual {
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .tech-arrow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        margin: -8px 0;
+        height: 32px;
+        position: relative;
+        z-index: 2;
+      }
+      .tech-arrow .line {
+        width: 1px;
+        flex: 1;
+        background: linear-gradient(180deg, var(--orange), var(--blue));
+        position: relative;
+        overflow: hidden;
+      }
+      .tech-arrow .line::after {
+        content: '';
+        position: absolute;
+        left: -2px;
+        top: -20%;
+        width: 5px;
+        height: 20%;
+        background: linear-gradient(180deg, transparent, white, transparent);
+        animation: flow 2.4s linear infinite;
+      }
+      @keyframes flow {
+        0% { top: -25%; }
+        100% { top: 100%; }
+      }
+      .tech-arrow .head {
+        width: 10px;
+        height: 10px;
+        border-right: 1.5px solid var(--blue-bright);
+        border-bottom: 1.5px solid var(--blue-bright);
+        transform: rotate(45deg);
+        margin-top: -3px;
+      }
+
+      /* ───────── INDUSTRIES ───────── */
+      .industries .ind-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .ind-card {
+        background: var(--bg-2);
+        padding: 32px 26px 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        transition: background 0.18s, transform 0.18s;
+        cursor: pointer;
+        position: relative;
+        min-height: 340px;
+      }
+      .ind-card:hover { background: var(--bg-3); }
+      .ind-card:hover .ind-arrow { transform: translate(4px, -4px); opacity: 1; color: var(--blue-bright); }
+      .ind-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        background: var(--blue-soft);
+        border: 1px solid rgba(0, 102, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--blue-bright);
+      }
+      .ind-card .num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        color: var(--text-4);
+      }
+      .ind-card h3 {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.018em;
+      }
+      .ind-card p {
+        font-size: 13.5px;
+        color: var(--text-3);
+        line-height: 1.55;
+        margin-top: auto;
+      }
+      .ind-arrow {
+        position: absolute;
+        top: 22px;
+        right: 22px;
+        color: var(--text-4);
+        opacity: 0.6;
+        transition: transform 0.2s, opacity 0.2s, color 0.2s;
+      }
+
+      /* ───────── PRODUCTS ───────── */
+      .products { background: var(--bg-2); }
+      .prod-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .prod-card {
+        background: var(--bg-3);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: border-color 0.18s, transform 0.18s;
+      }
+      .prod-card:hover { border-color: var(--blue); transform: translateY(-4px); }
+      .prod-visual {
+        aspect-ratio: 16 / 9;
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--line);
+        position: relative;
+        overflow: hidden;
+      }
+      .prod-visual svg { width: 100%; height: 100%; display: block; }
+      .prod-visual .corner-l {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--text-4);
+        text-transform: uppercase;
+      }
+      .prod-badge {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 4px 9px;
+        border-radius: 4px;
+        font-weight: 500;
+      }
+      .prod-badge.beta { background: var(--orange-soft); color: var(--orange); border: 1px solid rgba(255, 107, 0, 0.3); }
+      .prod-badge.soon { background: var(--bg); color: var(--text-3); border: 1px solid var(--line); }
+      .prod-badge.live { background: var(--blue-soft); color: var(--blue-bright); border: 1px solid rgba(0, 102, 255, 0.3); }
+      .prod-body {
+        padding: 26px 26px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        flex: 1;
+      }
+      .prod-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .prod-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .prod-name .colon { color: var(--blue-bright); margin-right: 2px; }
+      .prod-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        color: var(--text-4);
+        text-transform: uppercase;
+      }
+      .prod-desc {
+        font-size: 14.5px;
+        color: var(--text-3);
+        line-height: 1.55;
+      }
+      .prod-metrics {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px 0 8px;
+        margin-top: 4px;
+        border-top: 1px solid var(--line);
+      }
+      .prod-metric {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        font-size: 13px;
+      }
+      .prod-metric .k {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-4);
+      }
+      .prod-metric .v {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .prod-metric .v.blue { color: var(--blue-bright); }
+      .prod-metric .v.orange { color: var(--orange); }
+      .prod-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--blue-bright);
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 8px;
+      }
+
+      /* ───────── PINN vs CFD COMPARISON ───────── */
+      .compare-sec { background: var(--bg); }
+      .compare {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .compare > div {
+        padding: 22px 28px;
+        border-bottom: 1px solid var(--line);
+        background: var(--bg-2);
+      }
+      .compare > div:nth-last-child(-n + 3) { border-bottom: 0; }
+      .compare .col-h {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-4);
+        padding-bottom: 16px;
+        background: var(--bg-3);
+      }
+      .compare .col-h-cfd { color: var(--text-3); }
+      .compare .col-h-pinn { color: var(--orange); }
+      .compare .label {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--text);
+      }
+      .compare .v-cfd { color: var(--text-3); font-size: 14.5px; }
+      .compare .v-pinn {
+        color: var(--text);
+        font-size: 14.5px;
+        font-weight: 500;
+        position: relative;
+        background: linear-gradient(90deg, rgba(255, 107, 0, 0.06), transparent);
+      }
+      .compare .v-pinn .check {
+        color: var(--orange);
+        margin-right: 6px;
+        font-weight: 700;
+      }
+      .compare .cell-cfd { border-right: 1px solid var(--line); }
+      .compare .col-h-cfd, .compare .v-cfd { border-right: 1px solid var(--line); }
+      .compare-tagline {
+        text-align: center;
+        margin-top: 56px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(24px, 3vw, 40px);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      .compare-tagline .a { color: var(--text); }
+      .compare-tagline .b { color: var(--orange); }
+      .compare-tagline .c { color: var(--blue-bright); }
+      .compare-tagline .sep { color: var(--text-4); margin: 0 12px; }
+
+      /* ───────── CASE STUDIES ───────── */
+      .cases { background: var(--bg-2); }
+      .case-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .case-card {
+        background: var(--bg-3);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 32px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        transition: border-color 0.18s, transform 0.18s;
+        cursor: pointer;
+      }
+      .case-card:hover { border-color: var(--blue); transform: translateY(-4px); }
+      .case-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--blue-bright);
+        background: var(--blue-soft);
+        border: 1px solid rgba(0, 102, 255, 0.25);
+        padding: 4px 8px;
+        border-radius: 4px;
+        align-self: flex-start;
+      }
+      .case-metric {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(34px, 3.6vw, 46px);
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.025em;
+        color: var(--orange);
+        margin: 8px 0;
+      }
+      .case-metric .unit { font-size: 0.55em; color: var(--text-3); font-weight: 500; margin-left: 2px; }
+      .case-title {
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--text);
+      }
+      .case-desc {
+        font-size: 14px;
+        color: var(--text-3);
+        line-height: 1.55;
+      }
+      .case-link {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        color: var(--blue-bright);
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ───────── CAPABILITIES (icon grid) ───────── */
+      .caps-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .cap-cell {
+        background: var(--bg-2);
+        padding: 32px 28px 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        transition: background 0.18s;
+      }
+      .cap-cell:hover { background: var(--bg-3); }
+      .cap-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        background: var(--blue-soft);
+        border: 1px solid rgba(0, 102, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--blue-bright);
+      }
+      .cap-cell h3 {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+      .cap-cell p {
+        font-size: 13.5px;
+        color: var(--text-3);
+        line-height: 1.55;
+      }
+
+      /* ───────── CTA ───────── */
+      .cta-sec { padding: 128px 0 96px; }
+      .cta-frame {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 80px 64px;
+        background:
+          radial-gradient(circle at 80% 20%, rgba(0, 102, 255, 0.12), transparent 60%),
+          radial-gradient(circle at 20% 80%, rgba(255, 107, 0, 0.10), transparent 55%),
+          var(--bg-2);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 64px;
+        align-items: center;
+      }
+      .cta-frame h2 {
+        font-size: clamp(36px, 4.4vw, 60px);
+        font-weight: 700;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+        margin-bottom: 20px;
+      }
+      .cta-frame .cta-sub {
+        font-size: 16.5px;
+        color: var(--text-2);
+        margin-bottom: 36px;
+        max-width: 520px;
+        line-height: 1.55;
+      }
+      .cta-options {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .cta-option {
+        background: var(--bg-3);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 22px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        transition: border-color 0.18s, transform 0.18s;
+        cursor: pointer;
+      }
+      .cta-option:hover { border-color: var(--blue); transform: translateX(4px); }
+      .cta-option .left .title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 4px;
+        letter-spacing: -0.015em;
+      }
+      .cta-option .left .sub {
+        font-size: 13.5px;
+        color: var(--text-3);
+      }
+      .cta-option .arrow-icon {
+        color: var(--blue-bright);
+        flex-shrink: 0;
+      }
+
+      /* ───────── FOOTER ───────── */
+      footer {
+        background: var(--bg);
+        border-top: 1px solid var(--line-soft);
+        padding: 64px 0 32px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+        gap: 40px;
+      }
+      .footer-grid h4 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-4);
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+      .footer-grid ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .footer-grid li a {
+        color: var(--text-3);
+        font-size: 13.5px;
+        transition: color 0.12s;
+      }
+      .footer-grid li a:hover { color: var(--blue-bright); }
+      .footer-brand p {
+        margin-top: 16px;
+        font-size: 14px;
+        color: var(--text-3);
+        max-width: 320px;
+        line-height: 1.55;
+      }
+      .footer-brand .tagline {
+        margin-top: 22px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 14.5px;
+        color: var(--text-2);
+        font-weight: 500;
+      }
+      .footer-brand .tagline .o { color: var(--orange); }
+      .footer-brand .tagline .b { color: var(--blue-bright); }
+      .footer-social {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+      }
+      .footer-social a {
+        width: 38px;
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-3);
+        transition: border-color 0.15s, color 0.15s, background 0.15s;
+      }
+      .footer-social a:hover {
+        border-color: var(--blue-bright);
+        color: var(--blue-bright);
+        background: var(--blue-soft);
+      }
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 32px;
+        margin-top: 56px;
+        border-top: 1px solid var(--line-soft);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-4);
+      }
+
+      /* ───────── REVEAL ON SCROLL ───────── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      .reveal.shown {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ───────── RESPONSIVE ───────── */
+      @media (max-width: 1080px) {
+        .ind-grid { grid-template-columns: repeat(2, 1fr); }
+        .prod-grid { grid-template-columns: 1fr; }
+        .case-grid { grid-template-columns: 1fr 1fr; }
+        .caps-grid { grid-template-columns: repeat(2, 1fr); }
+        .cta-frame { grid-template-columns: 1fr; gap: 40px; padding: 56px 40px; }
+        .footer-grid { grid-template-columns: 1.5fr 1fr 1fr 1fr; }
+        .footer-grid > div:nth-child(5) { grid-column: 1 / -1; }
+      }
+      @media (max-width: 880px) {
+        .nav-links { display: none; }
+        .nav-mobile { display: inline-flex; }
+        .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+        .sec { padding: 80px 0; }
+        .sec-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px; }
+        .tech-layer { grid-template-columns: 48px 1fr; gap: 20px; padding: 24px; }
+        .tech-visual { display: none; }
+        .compare { grid-template-columns: 1fr; }
+        .compare > div { border-right: 0 !important; }
+        .compare .col-h-cfd, .compare .col-h-pinn { padding-top: 10px; }
+        .compare .label { background: var(--bg-3); }
+        .case-grid { grid-template-columns: 1fr; }
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+        .footer-grid > div:first-child { grid-column: 1 / -1; }
+        .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
+        .container { padding: 0 22px; }
+        .nav-inner { padding: 14px 22px; }
+        .cta-frame { padding: 40px 28px; }
+        .hero-cta-row .btn-primary, .hero-cta-row .btn-ghost { flex: 1; justify-content: center; }
+      }
+      @media (max-width: 560px) {
+        .ind-grid { grid-template-columns: 1fr; }
+        .caps-grid { grid-template-columns: 1fr; }
+        .footer-grid { grid-template-columns: 1fr; }
+        .hero-stats { grid-template-columns: 1fr; gap: 14px; }
+        .compare-tagline { font-size: 22px; }
+        .compare-tagline .sep { display: block; margin: 4px 0; }
+      }
+
+      /* ───────── ANNOUNCEMENT BAR ───────── */
+      .annbar {
+        position: relative;
+        z-index: 51;
+        background: linear-gradient(90deg,
+          var(--bg) 0%,
+          color-mix(in oklab, var(--orange) 18%, var(--bg)) 50%,
+          var(--bg) 100%);
+        border-bottom: 1px solid var(--line-soft);
+        font-size: 13px;
+        color: var(--text-2);
+      }
+      .annbar-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 10px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        position: relative;
+      }
+      .annbar .pill {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        background: var(--orange-soft);
+        color: var(--orange);
+        padding: 3px 9px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 107, 0, 0.3);
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .annbar a.link {
+        color: var(--blue-bright);
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .annbar a.link:hover { text-decoration: underline; text-underline-offset: 3px; }
+      .annbar .msg {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .annbar .close-x {
+        position: absolute;
+        right: 22px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: 0;
+        color: var(--text-4);
+        cursor: pointer;
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s, background 0.15s;
+      }
+      .annbar .close-x:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+
+      body.hide-bar .annbar { display: none; }
+      body.hide-stats .hero-stats { display: none; }
+
+      /* density */
+      body[data-density='compact'] .sec { padding: 80px 0; }
+      body[data-density='compact'] .sec.compact { padding: 64px 0; }
+      body[data-density='compact'] .hero { padding: 64px 0 80px; }
+      body[data-density='spacious'] .sec { padding: 160px 0; }
+      body[data-density='spacious'] .sec.compact { padding: 128px 0; }
+      body[data-density='spacious'] .hero { padding: 128px 0 160px; }
+
+      @media (max-width: 720px) {
+        .annbar-inner { padding: 10px 22px; font-size: 12px; gap: 10px; }
+        .annbar .close-x { right: 8px; }
+        .annbar .msg { font-size: 12px; }
+      }
+      @media (max-width: 560px) {
+        .annbar .msg { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mesh-bg"></div>
+
+    <!-- ─────────── ANNOUNCEMENT BAR ─────────── -->
+    <div class="annbar" id="annbar" role="region" aria-label="Announcement">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — maritime digital twin platform — is now live. <span style="color: var(--text-3);">8.2% avg. fuel reduction across pilot fleet.</span></span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Try it now →</a>
+        <button class="close-x" aria-label="Dismiss" id="annbarClose">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ─────────── NAV ─────────── -->
+    <nav class="nav" aria-label="Primary">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="OpSimTech home">
+          <svg viewBox="0 0 200 200" width="30" height="30" aria-hidden="true">
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ff6b00" />
+                <stop offset="100%" stop-color="#0066ff" />
+              </linearGradient>
+            </defs>
+            <circle cx="100" cy="100" r="78" fill="none" stroke="url(#logoGrad)" stroke-width="14" />
+            <path
+              d="M 4 100 C 30 36, 70 36, 100 100 S 170 164, 196 100"
+              fill="none"
+              stroke="url(#logoGrad)"
+              stroke-width="14"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="wm">OpSimTech</span>
+        </a>
+
+        <div class="nav-links">
+          <a class="nav-link" href="#technology">Technology</a>
+          <div class="dropdown">
+            <button class="nav-link">
+              Industries
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="dropdown-panel">
+              <a class="dropdown-item" href="#ind-aero">Aerodynamics</a>
+              <a class="dropdown-item" href="#ind-maritime">Hydrodynamics / Maritime</a>
+              <a class="dropdown-item" href="#ind-thermal">Thermal Systems</a>
+              <a class="dropdown-item" href="#ind-battery">Battery Manufacturing</a>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="nav-link">
+              Products
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="dropdown-panel">
+              <a class="dropdown-item" href="#prod-nav">OpSimNav · Maritime</a>
+              <a class="dropdown-item" href="#prod-bat">OpSimBat · Battery Mixing</a>
+              <a class="dropdown-item" href="#prod-heat">OpSimHeat · Thermal</a>
+            </div>
+          </div>
+          <a class="nav-link" href="#cases">Case Studies</a>
+          <a class="nav-link" href="#capabilities">Capabilities</a>
+          <a class="nav-link" href="#contact">Contact</a>
+          <a class="nav-cta" href="#contact">Request Demo</a>
+        </div>
+
+        <button class="nav-mobile" aria-label="Open menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ─────────── HERO ─────────── -->
+    <header id="top" class="hero">
+      <div class="glow-blue"></div>
+      <div class="glow-orange"></div>
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-badge">
+              <span class="dot"></span>
+              <span class="label">Physics-AI Digital Twins · Now in production</span>
+            </div>
+            <h1>
+              <span id="h-a">Industrial Digital Twins</span><br />
+              <span class="accent" id="h-b">Powered by Physics-AI</span>
+            </h1>
+            <p class="hero-sub">
+              Where governing equations meet neural networks. Real-time
+              predictions. Physics-consistent results. Built for Aerodynamics,
+              Maritime, Thermal, and Battery industries.
+            </p>
+            <div class="hero-cta-row">
+              <a class="btn-primary arrow" href="#contact">Request Demo </a>
+              <a class="btn-ghost arrow" href="#technology">Explore Technology </a>
+            </div>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <div class="v">1000<span class="unit">×</span></div>
+                <div class="l">Faster than CFD</div>
+              </div>
+              <div class="hero-stat">
+                <div class="v">0<span class="unit">mesh</span></div>
+                <div class="l">Meshless inference</div>
+              </div>
+              <div class="hero-stat">
+                <div class="v">8.2<span class="unit">%</span></div>
+                <div class="l">Avg. fuel reduction</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── VIDEO HERO SLOT ─── -->
+          <div class="video-hero" role="region" aria-label="Demo video placeholder">
+            <span class="vh-corner tl">REC · 1920×1080</span>
+            <span class="vh-corner tr">● LIVE</span>
+            <span class="vh-corner bl">t = 0.000s</span>
+            <span class="vh-corner br">Δt 3.2ms</span>
+
+            <div class="vh-canvas">
+              <svg id="heroFlow" viewBox="0 0 600 412" preserveAspectRatio="xMidYMid slice"></svg>
+            </div>
+            <div class="vh-overlay"></div>
+            <div class="vh-content">
+              <div class="vh-play" id="vhPlay" role="button" tabindex="0" aria-label="Play demo (placeholder)">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+              <div class="vh-label">DEMO</div>
+              <div class="vh-title">Industrial Digital Twin Demo</div>
+              <div class="vh-soon">Coming Soon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ─────────── TECHNOLOGY (3-layer architecture) ─────────── -->
+    <section id="technology" class="tech sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">§ 01 · Technology</div>
+          <div>
+            <h2>How OpSimTech Works</h2>
+            <p class="lead">
+              A three-layer architecture that fuses high-fidelity physics
+              simulation with neural networks — and serves the result as a
+              live digital twin.
+            </p>
+          </div>
+        </div>
+
+        <div class="tech-stack">
+          <!-- LAYER 1 -->
+          <div class="tech-layer l1 reveal">
+            <div class="tech-num">L1</div>
+            <div>
+              <h3>High-Fidelity Simulation</h3>
+              <p>
+                Industrial-grade CFD, SPH and DEM solvers ground the system
+                in first-principles physics. The data layer beneath every
+                model.
+              </p>
+              <div class="tech-tags">
+                <span class="tech-tag orange">CFD</span>
+                <span class="tech-tag orange">SPH</span>
+                <span class="tech-tag orange">DEM</span>
+                <span class="tech-tag">RANS · LES · DES</span>
+              </div>
+            </div>
+            <div class="tech-visual">
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <g stroke="#ff6b00" stroke-width="0.9" fill="none" opacity="0.8">
+                  <!-- mesh -->
+                  <polygon points="60,18 96,40 96,80 60,102 24,80 24,40" />
+                  <line x1="60" y1="18" x2="60" y2="102" />
+                  <line x1="24" y1="40" x2="96" y2="80" />
+                  <line x1="96" y1="40" x2="24" y2="80" />
+                  <line x1="60" y1="18" x2="24" y2="80" />
+                  <line x1="60" y1="18" x2="96" y2="80" />
+                  <line x1="60" y1="102" x2="24" y2="40" />
+                  <line x1="60" y1="102" x2="96" y2="40" />
+                </g>
+                <g fill="#ff6b00">
+                  <circle cx="60" cy="18" r="2.5" /><circle cx="96" cy="40" r="2.5" /><circle cx="96" cy="80" r="2.5" />
+                  <circle cx="60" cy="102" r="2.5" /><circle cx="24" cy="80" r="2.5" /><circle cx="24" cy="40" r="2.5" />
+                  <circle cx="60" cy="60" r="3" />
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- ARROW -->
+          <div class="tech-arrow"><div class="line"></div><div class="head"></div></div>
+
+          <!-- LAYER 2 -->
+          <div class="tech-layer l2 reveal">
+            <div class="tech-num">L2</div>
+            <div>
+              <h3>Physics-AI Hybrid Layer</h3>
+              <p>
+                PINNs encoded with governing equations — Navier-Stokes,
+                energy conservation, electrochemistry. The network learns
+                <em>and</em> respects physics. Multifidelity fusion blends
+                solver runs, sensor data, and analytical priors.
+              </p>
+              <div class="tech-tags">
+                <span class="tech-tag blue">PINNs</span>
+                <span class="tech-tag blue">Multifidelity Fusion</span>
+                <span class="tech-tag">Navier–Stokes</span>
+                <span class="tech-tag">Energy Conservation</span>
+              </div>
+            </div>
+            <div class="tech-visual">
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <!-- neural network with physics overlay -->
+                <g stroke="#5b6580" stroke-width="0.6" opacity="0.5">
+                  <line x1="22" y1="30" x2="60" y2="40" /><line x1="22" y1="30" x2="60" y2="60" /><line x1="22" y1="30" x2="60" y2="80" />
+                  <line x1="22" y1="60" x2="60" y2="40" /><line x1="22" y1="60" x2="60" y2="60" /><line x1="22" y1="60" x2="60" y2="80" />
+                  <line x1="22" y1="90" x2="60" y2="40" /><line x1="22" y1="90" x2="60" y2="60" /><line x1="22" y1="90" x2="60" y2="80" />
+                  <line x1="60" y1="40" x2="98" y2="60" /><line x1="60" y1="60" x2="98" y2="60" /><line x1="60" y1="80" x2="98" y2="60" />
+                </g>
+                <g>
+                  <circle cx="22" cy="30" r="4" fill="#ff6b00" />
+                  <circle cx="22" cy="60" r="4" fill="#ff6b00" />
+                  <circle cx="22" cy="90" r="4" fill="#ff6b00" />
+                  <circle cx="60" cy="40" r="4" fill="url(#nodeGrad)" />
+                  <circle cx="60" cy="60" r="4" fill="url(#nodeGrad)" />
+                  <circle cx="60" cy="80" r="4" fill="url(#nodeGrad)" />
+                  <circle cx="98" cy="60" r="4" fill="#0066ff" />
+                </g>
+                <defs>
+                  <linearGradient id="nodeGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ff6b00" />
+                    <stop offset="100%" stop-color="#0066ff" />
+                  </linearGradient>
+                </defs>
+                <text x="60" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5b6580" letter-spacing="1">∂u/∂t + u·∇u = ν∇²u</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- ARROW -->
+          <div class="tech-arrow"><div class="line"></div><div class="head"></div></div>
+
+          <!-- LAYER 3 -->
+          <div class="tech-layer l3 reveal">
+            <div class="tech-num">L3</div>
+            <div>
+              <h3>Real-Time Digital Twin</h3>
+              <p>
+                Live predictions exposed through APIs and dashboards.
+                Designers and operators query a continuously updated model —
+                no mesh, no solver queue, no waiting.
+              </p>
+              <div class="tech-tags">
+                <span class="tech-tag blue">REST &amp; Python SDK</span>
+                <span class="tech-tag blue">&lt; 10 ms inference</span>
+                <span class="tech-tag">Sensor-fed</span>
+                <span class="tech-tag">Edge-deployable</span>
+              </div>
+            </div>
+            <div class="tech-visual">
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <!-- live waveform / dashboard -->
+                <rect x="14" y="18" width="92" height="84" rx="6" fill="none" stroke="#0066ff" stroke-width="1" opacity="0.7" />
+                <line x1="14" y1="38" x2="106" y2="38" stroke="#1f2942" stroke-width="0.8" />
+                <circle cx="22" cy="28" r="1.5" fill="#0066ff" />
+                <circle cx="28" cy="28" r="1.5" fill="#0066ff" />
+                <circle cx="34" cy="28" r="1.5" fill="#0066ff" />
+                <path d="M 22 80 L 32 65 L 42 70 L 52 50 L 62 58 L 72 42 L 82 48 L 95 38"
+                  fill="none" stroke="#0066ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="95" cy="38" r="3" fill="#0066ff" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── INDUSTRIES ─────────── -->
+    <section id="industries" class="industries sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">§ 02 · Industries</div>
+          <div>
+            <h2>Where physics-AI moves the needle.</h2>
+            <p class="lead">
+              Four verticals where first-principles simulation is too slow
+              for the decision loop, and pure ML is too brittle to trust.
+            </p>
+          </div>
+        </div>
+
+        <div class="ind-grid">
+          <a href="#prod-bat" id="ind-aero" class="ind-card reveal">
+            <div class="ind-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </div>
+            <div class="ind-icon">
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <!-- airfoil profile -->
+                <path d="M3 18 Q 14 8, 28 16 Q 26 18, 28 18 Q 14 24, 3 18 Z" fill="currentColor" fill-opacity="0.15" />
+                <path d="M6 9 Q 14 8, 22 9 M6 24 Q 14 25, 22 24" stroke-width="0.8" opacity="0.6" stroke-dasharray="2 2" />
+              </svg>
+            </div>
+            <span class="num">/ 01 · External flow</span>
+            <h3>Aerodynamics</h3>
+            <p>Airfoil &amp; blade optimization. Drag, lift, and noise prediction. Sweep thousands of designs in the time of a single CFD run.</p>
+          </a>
+
+          <a href="#prod-nav" id="ind-maritime" class="ind-card reveal">
+            <div class="ind-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </div>
+            <div class="ind-icon">
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <!-- hull + waterline -->
+                <path d="M5 14 L27 14 L24 22 Q16 25, 8 22 Z" fill="currentColor" fill-opacity="0.15" />
+                <path d="M5 14 L27 14 L24 22 Q16 25, 8 22 Z" />
+                <line x1="3" y1="14" x2="29" y2="14" stroke-dasharray="2 2" opacity="0.5" />
+                <path d="M14 14 L14 8 L18 8 L18 14" />
+              </svg>
+            </div>
+            <span class="num">/ 02 · Hydrodynamics</span>
+            <h3>Maritime &amp; Hydrodynamics</h3>
+            <p>Hull optimization, propulsion, fuel reduction. Voyage-aware digital twins that learn from sea-state and update each crossing.</p>
+          </a>
+
+          <a href="#prod-heat" id="ind-thermal" class="ind-card reveal">
+            <div class="ind-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </div>
+            <div class="ind-icon">
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <!-- thermal heatmap cells -->
+                <rect x="6" y="6" width="6" height="6" fill="currentColor" fill-opacity="0.4" />
+                <rect x="13" y="6" width="6" height="6" fill="currentColor" fill-opacity="0.7" />
+                <rect x="20" y="6" width="6" height="6" fill="currentColor" fill-opacity="0.5" />
+                <rect x="6" y="13" width="6" height="6" fill="currentColor" fill-opacity="0.6" />
+                <rect x="13" y="13" width="6" height="6" fill="currentColor" />
+                <rect x="20" y="13" width="6" height="6" fill="currentColor" fill-opacity="0.8" />
+                <rect x="6" y="20" width="6" height="6" fill="currentColor" fill-opacity="0.3" />
+                <rect x="13" y="20" width="6" height="6" fill="currentColor" fill-opacity="0.5" />
+                <rect x="20" y="20" width="6" height="6" fill="currentColor" fill-opacity="0.4" />
+              </svg>
+            </div>
+            <span class="num">/ 03 · Heat transfer</span>
+            <h3>Thermal Systems</h3>
+            <p>Battery thermal management, electronics cooling, heat exchangers. Conjugate heat transfer without remeshing on geometry changes.</p>
+          </a>
+
+          <a href="#prod-bat" id="ind-battery" class="ind-card reveal">
+            <div class="ind-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </div>
+            <div class="ind-icon">
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <!-- battery + mixing -->
+                <rect x="8" y="6" width="16" height="22" rx="2" />
+                <rect x="13" y="3" width="6" height="3" />
+                <circle cx="13" cy="14" r="1.5" fill="currentColor" />
+                <circle cx="18" cy="17" r="1.5" fill="currentColor" />
+                <circle cx="15" cy="20" r="1.5" fill="currentColor" />
+                <circle cx="20" cy="13" r="1.2" fill="currentColor" opacity="0.6" />
+                <circle cx="12" cy="22" r="1.2" fill="currentColor" opacity="0.6" />
+              </svg>
+            </div>
+            <span class="num">/ 04 · Process mfg</span>
+            <h3>Battery Manufacturing</h3>
+            <p>Electrode slurry mixing, coating, drying. SPH-based modeling catches defects before they bake into the cell.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── PRODUCTS ─────────── -->
+    <section id="products" class="products sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow orange">§ 03 · Products</div>
+          <div>
+            <h2>Three digital twins. Three industries. <span class="orange-text">One stack.</span></h2>
+            <p class="lead">
+              Each product is a domain-specific deployment of the
+              OpSimTech Physics-AI stack — purpose-built for the workflow
+              of its industry.
+            </p>
+          </div>
+        </div>
+
+        <div class="prod-grid">
+          <!-- OPSIMNAV -->
+          <article id="prod-nav" class="prod-card reveal">
+            <div class="prod-visual">
+              <span class="corner-l">NAV · hull / wake</span>
+              <span class="prod-badge beta">● Beta</span>
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="navGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0066ff" stop-opacity="0.20" />
+                    <stop offset="100%" stop-color="#0066ff" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="130" x2="400" y2="130" stroke="#0066ff" stroke-width="0.6" opacity="0.4" stroke-dasharray="3 4" />
+                <rect x="0" y="130" width="400" height="95" fill="url(#navGrad)" />
+                <!-- hull -->
+                <path d="M 70 108 Q 160 88, 290 102 Q 330 108, 350 124 L 350 144 Q 330 152, 290 152 L 90 152 Q 60 148, 70 108 Z" fill="#ff6b00" opacity="0.9" />
+                <!-- wake streamlines -->
+                <g stroke="#0066ff" stroke-width="0.9" fill="none" opacity="0.55">
+                  <path d="M 350 130 Q 375 138, 398 155" />
+                  <path d="M 350 138 Q 375 148, 398 168" />
+                  <path d="M 350 122 Q 375 128, 398 138" />
+                </g>
+                <g stroke="#2b85ff" stroke-width="0.7" fill="none" opacity="0.4">
+                  <path d="M 0 60 Q 100 50, 200 60 T 400 60" />
+                  <path d="M 0 80 Q 100 72, 200 80 T 400 80" />
+                  <path d="M 0 180 Q 100 188, 200 180 T 400 180" />
+                </g>
+              </svg>
+            </div>
+            <div class="prod-body">
+              <div class="prod-head">
+                <div class="prod-name"><span class="colon">/</span>OpSimNav</div>
+                <span class="prod-tag">v0.9 · Beta</span>
+              </div>
+              <p class="prod-desc">
+                Maritime hydrodynamics digital twin. Hull optimization,
+                voyage-aware fuel modeling, route planning — backed by
+                physics-consistent surrogates.
+              </p>
+              <div class="prod-metrics">
+                <div class="prod-metric">
+                  <span class="k">Fuel savings</span>
+                  <span class="v orange">8.2%</span>
+                </div>
+                <div class="prod-metric">
+                  <span class="k">CO₂ reduction</span>
+                  <span class="v">1,200 t/yr</span>
+                </div>
+                <div class="prod-metric">
+                  <span class="k">Inference</span>
+                  <span class="v blue">&lt; 10 ms</span>
+                </div>
+              </div>
+              <a class="prod-cta arrow" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Open OpSimNav </a>
+            </div>
+          </article>
+
+          <!-- OPSIMBAT -->
+          <article id="prod-bat" class="prod-card reveal">
+            <div class="prod-visual">
+              <span class="corner-l">BAT · mixing tank</span>
+              <span class="prod-badge soon">In development</span>
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <!-- tank outline -->
+                <path d="M 100 50 L 100 175 Q 100 195, 200 195 Q 300 195, 300 175 L 300 50" fill="none" stroke="#0066ff" stroke-width="1.5" opacity="0.6" />
+                <ellipse cx="200" cy="50" rx="100" ry="14" fill="none" stroke="#0066ff" stroke-width="1.5" opacity="0.6" />
+                <!-- slurry surface -->
+                <ellipse cx="200" cy="70" rx="98" ry="13" fill="#0066ff" opacity="0.10" />
+                <!-- impeller shaft -->
+                <line x1="200" y1="20" x2="200" y2="155" stroke="#ff6b00" stroke-width="2.4" />
+                <!-- impeller blades (rotating illusion) -->
+                <ellipse cx="200" cy="155" rx="38" ry="6" fill="#ff6b00" opacity="0.8" />
+                <ellipse cx="200" cy="155" rx="38" ry="3" fill="#ff6b00" />
+                <!-- particles -->
+                <g fill="#0066ff" opacity="0.7">
+                  <circle cx="130" cy="100" r="2.5" />
+                  <circle cx="160" cy="120" r="2" />
+                  <circle cx="240" cy="110" r="2.4" />
+                  <circle cx="265" cy="135" r="2" />
+                  <circle cx="180" cy="130" r="1.6" />
+                  <circle cx="220" cy="170" r="2.2" />
+                  <circle cx="155" cy="165" r="2" />
+                  <circle cx="250" cy="165" r="1.8" />
+                  <circle cx="140" cy="140" r="1.4" />
+                  <circle cx="275" cy="100" r="1.4" />
+                </g>
+              </svg>
+            </div>
+            <div class="prod-body">
+              <div class="prod-head">
+                <div class="prod-name"><span class="colon">/</span>OpSimBat</div>
+                <span class="prod-tag">SPH solver</span>
+              </div>
+              <p class="prod-desc">
+                Mixing tank digital twin for battery electrode manufacturing.
+                SPH-based slurry modeling captures shear, segregation, and
+                wall effects line-rate.
+              </p>
+              <div class="prod-metrics">
+                <div class="prod-metric">
+                  <span class="k">Solver</span>
+                  <span class="v">SPH · DEM</span>
+                </div>
+                <div class="prod-metric">
+                  <span class="k">Tank scales</span>
+                  <span class="v">1 L → 10 m³</span>
+                </div>
+                <div class="prod-metric">
+                  <span class="k">Defect drop</span>
+                  <span class="v orange">–34%</span>
+                </div>
+              </div>
+              <a class="prod-cta arrow" href="#contact">Learn more </a>
+            </div>
+          </article>
+
+          <!-- OPSIMHEAT -->
+          <article id="prod-heat" class="prod-card reveal">
+            <div class="prod-visual">
+              <span class="corner-l">HEAT · pack thermal</span>
+              <span class="prod-badge soon">In development</span>
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="heatGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#0066ff" />
+                    <stop offset="50%" stop-color="#ff6b00" />
+                    <stop offset="100%" stop-color="#0066ff" />
+                  </linearGradient>
+                </defs>
+                <!-- battery pack cells -->
+                <g>
+                  <rect x="60" y="50" width="50" height="120" rx="4" fill="url(#heatGrad)" opacity="0.4" />
+                  <rect x="120" y="50" width="50" height="120" rx="4" fill="url(#heatGrad)" opacity="0.6" />
+                  <rect x="180" y="50" width="50" height="120" rx="4" fill="url(#heatGrad)" opacity="0.9" />
+                  <rect x="240" y="50" width="50" height="120" rx="4" fill="url(#heatGrad)" opacity="0.7" />
+                  <rect x="300" y="50" width="50" height="120" rx="4" fill="url(#heatGrad)" opacity="0.5" />
+                </g>
+                <!-- thermal hot spot marker -->
+                <circle cx="205" cy="100" r="6" fill="#ff6b00" />
+                <circle cx="205" cy="100" r="12" fill="none" stroke="#ff6b00" stroke-width="1.5" opacity="0.5" />
+                <circle cx="205" cy="100" r="18" fill="none" stroke="#ff6b00" stroke-width="1" opacity="0.3" />
+                <!-- temp scale -->
+                <text x="60" y="200" font-family="JetBrains Mono" font-size="9" fill="#8b95ac">25°C</text>
+                <text x="320" y="200" font-family="JetBrains Mono" font-size="9" fill="#ff6b00">68°C</text>
+              </svg>
+            </div>
+            <div class="prod-body">
+              <div class="prod-head">
+                <div class="prod-name"><span class="colon">/</span>OpSimHeat</div>
+                <span class="prod-tag">CFD + PINN</span>
+              </div>
+              <p class="prod-desc">
+                Battery thermal management digital twin. Thermal runaway
+                prevention, cell-level degradation modeling, and active
+                cooling design.
+              </p>
+              <div class="prod-metrics">
+                <div class="prod-metric">
+                  <span class="k">Coverage</span>
+                  <span class="v">Cell → Pack</span>
+                </div>
+                <div class="prod-metric">
+                  <span class="k">Update rate</span>
+                  <span class="v blue">5 Hz live</span>
+                </div>
+                <div class="prod-metric">
+                  <span class="k">Cycle gain</span>
+                  <span class="v orange">+18%</span>
+                </div>
+              </div>
+              <a class="prod-cta arrow" href="#contact">Learn more </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── PINN vs CFD ─────────── -->
+    <section class="compare-sec sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow orange">§ 04 · Why PINN vs CFD</div>
+          <div>
+            <h2>Same physics. <span class="orange-text">No mesh.</span> 1000× faster.</h2>
+            <p class="lead">
+              Traditional CFD is accurate but slow. Pure ML is fast but
+              extrapolates poorly. OpSimTech PINNs bridge the gap — and ship.
+            </p>
+          </div>
+        </div>
+
+        <div class="compare reveal" role="table">
+          <div class="col-h" role="columnheader"></div>
+          <div class="col-h col-h-cfd" role="columnheader">Traditional CFD</div>
+          <div class="col-h col-h-pinn" role="columnheader">OpSimTech PINNs</div>
+
+          <div class="label cell-cfd" role="cell">Speed</div>
+          <div class="v-cfd" role="cell">Hours – Days</div>
+          <div class="v-pinn" role="cell"><span class="check">✓</span>Seconds</div>
+
+          <div class="label cell-cfd" role="cell">Meshing required</div>
+          <div class="v-cfd" role="cell">Yes</div>
+          <div class="v-pinn" role="cell"><span class="check">✓</span>No</div>
+
+          <div class="label cell-cfd" role="cell">Physics consistency</div>
+          <div class="v-cfd" role="cell">High</div>
+          <div class="v-pinn" role="cell"><span class="check">✓</span>High</div>
+
+          <div class="label cell-cfd" role="cell">Real-time capable</div>
+          <div class="v-cfd" role="cell">No</div>
+          <div class="v-pinn" role="cell"><span class="check">✓</span>Yes</div>
+
+          <div class="label cell-cfd" role="cell">Iteration cost</div>
+          <div class="v-cfd" role="cell">High</div>
+          <div class="v-pinn" role="cell"><span class="check">✓</span>Negligible</div>
+        </div>
+
+        <div class="compare-tagline reveal">
+          <span class="a">Same physics.</span>
+          <span class="sep">·</span>
+          <span class="b">No mesh.</span>
+          <span class="sep">·</span>
+          <span class="c">1000× faster.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── CASE STUDIES ─────────── -->
+    <section id="cases" class="cases sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">§ 05 · Case Studies</div>
+          <div>
+            <h2>Real fleets. Real factories. Real numbers.</h2>
+            <p class="lead">
+              Selected deployments where OpSimTech digital twins replaced
+              brittle ML or slow simulation in the customer's decision loop.
+            </p>
+          </div>
+        </div>
+
+        <div class="case-grid">
+          <a href="#" class="case-card reveal">
+            <span class="case-tag">Maritime · Container</span>
+            <div class="case-metric">8.2<span class="unit">% fuel</span></div>
+            <h3 class="case-title">14k TEU container ship hull retrofit</h3>
+            <p class="case-desc">
+              Voyage-aware surrogate replaced 18h RANS runs in the routing
+              loop. €450,000/year fuel + emissions savings on a single vessel.
+            </p>
+            <span class="case-link arrow">Read case study </span>
+          </a>
+
+          <a href="#" class="case-card reveal">
+            <span class="case-tag">Battery · Gigafactory</span>
+            <div class="case-metric">–34<span class="unit">% defect</span></div>
+            <h3 class="case-title">NMC811 electrode slurry mixing</h3>
+            <p class="case-desc">
+              SPH-DEM digital twin caught dead-zones before they hit the
+              coating head. Yield up, scrap down, line uptime increased
+              7.5%.
+            </p>
+            <span class="case-link arrow">Read case study </span>
+          </a>
+
+          <a href="#" class="case-card reveal">
+            <span class="case-tag">Thermal · EV pack</span>
+            <div class="case-metric">+18<span class="unit">% cycles</span></div>
+            <h3 class="case-title">EV battery pack cooling design</h3>
+            <p class="case-desc">
+              Live PINN-driven thermal twin let designers sweep 800 cooling
+              channel geometries in 6 hours — vs. 11 weeks of CFD.
+            </p>
+            <span class="case-link arrow">Read case study </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── CAPABILITIES ─────────── -->
+    <section id="capabilities" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">§ 06 · Simulation Capabilities</div>
+          <div>
+            <h2>Six composable primitives across the stack.</h2>
+            <p class="lead">
+              Use them individually for a focused project — or chained
+              through one validated pipeline.
+            </p>
+          </div>
+        </div>
+
+        <div class="caps-grid reveal">
+          <div class="cap-cell">
+            <div class="cap-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                <path d="M3 16c4 0 4-4 8-4s4 4 8 4M3 12c4 0 4-4 8-4s4 4 8 4M3 8c4 0 4-4 8-4s4 4 8 4" />
+              </svg>
+            </div>
+            <h3>CFD</h3>
+            <p>Computational Fluid Dynamics. RANS, LES, DES for steady &amp; transient flows.</p>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="6" cy="7" r="1.5" /><circle cx="12" cy="5" r="1.5" /><circle cx="18" cy="9" r="1.5" />
+                <circle cx="6" cy="14" r="1.5" /><circle cx="14" cy="14" r="1.5" /><circle cx="20" cy="17" r="1.5" />
+                <circle cx="10" cy="20" r="1.5" />
+              </svg>
+            </div>
+            <h3>SPH</h3>
+            <p>Smoothed Particle Hydrodynamics. Free-surface, slamming, slurries, multiphase.</p>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="8" cy="8" r="2.2" /><circle cx="16" cy="9" r="2.6" />
+                <circle cx="9" cy="16" r="2.6" /><circle cx="17" cy="17" r="2.2" />
+              </svg>
+            </div>
+            <h3>DEM</h3>
+            <p>Discrete Element Method. Granular powders, particulate process flow, packing.</p>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="5" cy="6" r="2" /><circle cx="5" cy="18" r="2" />
+                <circle cx="12" cy="12" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="19" cy="18" r="2" />
+                <path d="M7 6l3 5M7 18l3-5M14 11l3-5M14 13l3 5" />
+              </svg>
+            </div>
+            <h3>PINNs</h3>
+            <p>Physics-Informed Neural Networks. PDE-residual loss embedded in the model.</p>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                <path d="M3 18 Q 8 6, 12 12 T 21 18" />
+                <path d="M3 14 Q 8 2, 12 8 T 21 14" opacity="0.5" />
+                <path d="M3 22 Q 8 10, 12 16 T 21 22" opacity="0.5" />
+              </svg>
+            </div>
+            <h3>Multifidelity Modeling</h3>
+            <p>Blend cheap analytical models with expensive solver runs — coherently.</p>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M4 8 L20 8 M4 12 L20 12 M4 16 L20 16" stroke-dasharray="2 2" />
+                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+                <circle cx="14" cy="12" r="1.5" fill="currentColor" />
+                <circle cx="10" cy="16" r="1.5" fill="currentColor" />
+              </svg>
+            </div>
+            <h3>Data Fusion</h3>
+            <p>Merge sensor streams, lab measurements, and simulation outputs into one twin.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── CTA / CONTACT ─────────── -->
+    <section id="contact" class="cta-sec">
+      <div class="container">
+        <div class="cta-frame reveal">
+          <div>
+            <div class="sec-eyebrow orange" style="margin-bottom: 20px;">§ 07 · Get in touch</div>
+            <h2>Ready to Build Your <span class="gradient-text">Digital Twin?</span></h2>
+            <p class="cta-sub">
+              Tell us what you're modeling and where it hurts. We respond
+              within two working days.
+            </p>
+          </div>
+
+          <div class="cta-options">
+            <a class="cta-option" href="#">
+              <div class="left">
+                <div class="title">Request a Demo</div>
+                <div class="sub">15-minute walkthrough · pick a slot</div>
+              </div>
+              <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+            <a class="cta-option" href="mailto:engineering@opsimtech.com">
+              <div class="left">
+                <div class="title">Talk to an Engineer</div>
+                <div class="sub">engineering@opsimtech.com · response &lt; 2 days</div>
+              </div>
+              <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+            <a class="cta-option" href="#">
+              <div class="left">
+                <div class="title">Send a Project Brief</div>
+                <div class="sub">Drop a PDF · we'll scope a pilot</div>
+              </div>
+              <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── FOOTER ─────────── -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="#top">
+              <svg viewBox="0 0 200 200" width="30" height="30" aria-hidden="true">
+                <circle cx="100" cy="100" r="78" fill="none" stroke="url(#logoGrad)" stroke-width="14" />
+                <path
+                  d="M 4 100 C 30 36, 70 36, 100 100 S 170 164, 196 100"
+                  fill="none"
+                  stroke="url(#logoGrad)"
+                  stroke-width="14"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span class="wm">OpSimTech</span>
+            </a>
+            <p>
+              Industrial digital twins, powered by Physics-AI. Built by
+              simulation engineers &amp; ML researchers — for the people
+              running the factories, fleets, and labs.
+            </p>
+            <div class="tagline">
+              <span class="o">Physics-first.</span>
+              <span class="b"> AI-accelerated.</span>
+              <span> Industry-ready.</span>
+            </div>
+            <div class="footer-social">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM8 19H5V8h3v11zM6.5 6.7c-1 0-1.7-.8-1.7-1.7s.8-1.7 1.7-1.7 1.7.8 1.7 1.7-.7 1.7-1.7 1.7zM20 19h-3v-5.6c0-3.4-4-3.1-4 0V19h-3V8h3v1.8c1.4-2.6 7-2.8 7 2.5V19z"/></svg>
+              </a>
+              <a href="mailto:contact@opsimtech.com" aria-label="Email">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+              </a>
+              <a href="https://github.com/Opsimtech" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 6 .5.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4>Products</h4>
+            <ul>
+              <li><a href="#prod-nav">OpSimNav · Maritime</a></li>
+              <li><a href="#prod-bat">OpSimBat · Battery</a></li>
+              <li><a href="#prod-heat">OpSimHeat · Thermal</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Industries</h4>
+            <ul>
+              <li><a href="#ind-aero">Aerodynamics</a></li>
+              <li><a href="#ind-maritime">Maritime</a></li>
+              <li><a href="#ind-thermal">Thermal Systems</a></li>
+              <li><a href="#ind-battery">Battery Mfg.</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Capabilities</h4>
+            <ul>
+              <li><a href="#capabilities">CFD</a></li>
+              <li><a href="#capabilities">SPH</a></li>
+              <li><a href="#capabilities">DEM</a></li>
+              <li><a href="#capabilities">PINNs</a></li>
+              <li><a href="#capabilities">Multifidelity</a></li>
+              <li><a href="#capabilities">Data Fusion</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#technology">Technology</a></li>
+              <li><a href="#cases">Case Studies</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li><a href="Opsimtech Logo.html">Brand &amp; Logo</a></li>
+              <li><a href="Opsimtech Site v1.html">v1 (mint/teal)</a></li>
+              <li><a href="Opsimtech Site Light.html">Light edition</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2026 OpSimTech. All rights reserved.</span>
+          <span>Physics-first · AI-accelerated · Industry-ready</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ─────────── SCRIPTS ─────────── -->
+    <script>
+      // ── Reveal on scroll ─────────────────────────────────────────
+      (function () {
+        const els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(el => el.classList.add('shown'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add('shown');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+        els.forEach(el => io.observe(el));
+      })();
+
+      // ── Hero video-slot flow visualization ──────────────────────
+      (function () {
+        const svg = document.getElementById('heroFlow');
+        if (!svg) return;
+        const W = 600, H = 412;
+        const cx = W * 0.5, cy = H * 0.55;
+        const radius = 64;
+
+        function flow(x, y) {
+          const X = x - cx;
+          const Y = y - cy;
+          const r2 = X * X + Y * Y;
+          if (r2 < radius * radius) return null;
+          const u = 1 - (radius * radius * (X * X - Y * Y)) / (r2 * r2);
+          const v = (-2 * radius * radius * X * Y) / (r2 * r2);
+          return { u, v, mag: Math.hypot(u, v) };
+        }
+
+        const ns = 'http://www.w3.org/2000/svg';
+        const frag = document.createDocumentFragment();
+
+        // background dot grid
+        for (let x = 28; x < W; x += 32) {
+          for (let y = 28; y < H; y += 32) {
+            const dot = document.createElementNS(ns, 'circle');
+            dot.setAttribute('cx', x);
+            dot.setAttribute('cy', y);
+            dot.setAttribute('r', 0.7);
+            dot.setAttribute('fill', '#1f2942');
+            frag.appendChild(dot);
+          }
+        }
+
+        // arrows
+        const gridX = 18, gridY = 13;
+        const sx = W / gridX, sy = H / gridY;
+        for (let i = 0; i < gridX; i++) {
+          for (let j = 0; j < gridY; j++) {
+            const x = (i + 0.5) * sx;
+            const y = (j + 0.5) * sy;
+            const f = flow(x, y);
+            if (!f) continue;
+            const ang = Math.atan2(f.v, f.u);
+            const len = Math.min(18, 10 + f.mag * 4);
+            const dist = Math.hypot(x - cx, y - cy);
+            const near = dist < radius * 2.1;
+            const color = near ? '#2b85ff' : '#36405e';
+            const opacity = near ? 0.95 : 0.4;
+            const sw = near ? 1.5 : 0.9;
+            const g = document.createElementNS(ns, 'g');
+            g.setAttribute('transform', `translate(${x} ${y}) rotate(${(ang * 180) / Math.PI})`);
+            const line = document.createElementNS(ns, 'line');
+            line.setAttribute('x1', -len / 2);
+            line.setAttribute('y1', 0);
+            line.setAttribute('x2', len / 2);
+            line.setAttribute('y2', 0);
+            line.setAttribute('stroke', color);
+            line.setAttribute('stroke-width', sw);
+            line.setAttribute('stroke-linecap', 'round');
+            line.setAttribute('opacity', opacity);
+            g.appendChild(line);
+            const head = document.createElementNS(ns, 'path');
+            head.setAttribute('d', `M ${len / 2 - 3} -2.6 L ${len / 2} 0 L ${len / 2 - 3} 2.6`);
+            head.setAttribute('fill', 'none');
+            head.setAttribute('stroke', color);
+            head.setAttribute('stroke-width', sw);
+            head.setAttribute('stroke-linecap', 'round');
+            head.setAttribute('stroke-linejoin', 'round');
+            head.setAttribute('opacity', opacity);
+            g.appendChild(head);
+            frag.appendChild(g);
+          }
+        }
+
+        // streamlines
+        function tracePath(x0, y0, dir) {
+          let x = x0, y = y0;
+          let d = `M ${x.toFixed(1)} ${y.toFixed(1)}`;
+          for (let k = 0; k < 800; k++) {
+            const f = flow(x, y);
+            if (!f) break;
+            const step = 2.4;
+            x += dir * (f.u / f.mag) * step;
+            y += dir * (f.v / f.mag) * step;
+            if (x < -10 || x > W + 10 || y < -10 || y > H + 10) break;
+            d += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
+          }
+          return d;
+        }
+        const seeds = [40, 100, 160, 240, 300, 360];
+        for (const y0 of seeds) {
+          const path = document.createElementNS(ns, 'path');
+          path.setAttribute('d', tracePath(-5, y0, 1));
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke', '#0066ff');
+          path.setAttribute('stroke-width', '0.9');
+          path.setAttribute('opacity', '0.55');
+          frag.appendChild(path);
+        }
+
+        // obstacle (airfoil-ish)
+        const obstacle = document.createElementNS(ns, 'ellipse');
+        obstacle.setAttribute('cx', cx);
+        obstacle.setAttribute('cy', cy);
+        obstacle.setAttribute('rx', radius);
+        obstacle.setAttribute('ry', radius * 0.55);
+        obstacle.setAttribute('fill', '#ff6b00');
+        obstacle.setAttribute('opacity', '0.85');
+        frag.appendChild(obstacle);
+
+        svg.appendChild(frag);
+      })();
+
+      // ── Play button (placeholder behavior) ──────────────────────
+      (function () {
+        const btn = document.getElementById('vhPlay');
+        if (!btn) return;
+        const onClick = () => {
+          btn.animate(
+            [
+              { transform: 'scale(1)' },
+              { transform: 'scale(0.92)' },
+              { transform: 'scale(1.06)' },
+              { transform: 'scale(1)' },
+            ],
+            { duration: 320, easing: 'ease-out' }
+          );
+        };
+        btn.addEventListener('click', onClick);
+        btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } });
+      })();
+
+      // ── Announcement bar dismiss ────────────────────────────────
+      (function () {
+        const close = document.getElementById('annbarClose');
+        if (!close) return;
+        close.addEventListener('click', () => {
+          document.body.classList.add('hide-bar');
+          // sync to tweaks if loaded
+          window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { showBar: false } }, '*');
+        });
+      })();
+    </script>
+
+    <!-- ─────────── TWEAKS PANEL ─────────── -->
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+    <div id="tweaks-root"></div>
+
+    <script type="text/babel">
+      const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+        "headlineA": "Industrial Digital Twins",
+        "headlineB": "Powered by Physics-AI",
+        "subhead": "Where governing equations meet neural networks. Real-time predictions. Physics-consistent results. Built for Aerodynamics, Maritime, Thermal, and Battery industries.",
+        "palette": ["#0066ff", "#2b85ff", "#ff6b00"],
+        "showBar": true,
+        "showStats": true,
+        "showOpsimBadge": true,
+        "ctaPrimary": "Request Demo",
+        "ctaSecondary": "Explore Technology",
+        "density": "regular"
+      }/*EDITMODE-END*/;
+
+      const PALETTES = [
+        ["#0066ff", "#2b85ff", "#ff6b00"], // Electric blue + orange (default)
+        ["#00aaff", "#33ccff", "#ff3399"], // Cyan + magenta
+        ["#10b981", "#34d399", "#f59e0b"], // Emerald + amber
+        ["#6366f1", "#818cf8", "#fb7185"], // Indigo + coral
+        ["#a855f7", "#c084fc", "#fbbf24"], // Purple + gold
+        ["#e11d48", "#fb7185", "#22d3ee"], // Crimson + cyan
+      ];
+
+      function hexToRgba(hex, a) {
+        const m = hex.replace('#', '');
+        const r = parseInt(m.slice(0, 2), 16);
+        const g = parseInt(m.slice(2, 4), 16);
+        const b = parseInt(m.slice(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+      }
+
+      function App() {
+        const [t, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
+
+        React.useEffect(() => {
+          const r = document.documentElement;
+          const [p, pBright, h] = t.palette;
+          r.style.setProperty('--blue', p);
+          r.style.setProperty('--blue-bright', pBright);
+          r.style.setProperty('--blue-soft', hexToRgba(p, 0.10));
+          r.style.setProperty('--orange', h);
+          r.style.setProperty('--orange-soft', hexToRgba(h, 0.10));
+          r.style.setProperty('--grad', `linear-gradient(135deg, ${p}, ${pBright})`);
+          r.style.setProperty('--grad-mix', `linear-gradient(135deg, ${h}, ${p})`);
+
+          document.body.classList.toggle('hide-bar', !t.showBar);
+          document.body.classList.toggle('hide-stats', !t.showStats);
+          document.body.dataset.density = t.density;
+
+          // headline
+          const a = document.querySelector('.hero h1 #h-a');
+          const b = document.querySelector('.hero h1 #h-b');
+          if (a) a.textContent = t.headlineA;
+          if (b) b.textContent = t.headlineB;
+          const sub = document.querySelector('.hero-sub');
+          if (sub) sub.textContent = t.subhead;
+          const c1 = document.querySelector('.hero-cta-row .btn-primary');
+          if (c1) c1.firstChild.nodeValue = t.ctaPrimary + ' ';
+          const c2 = document.querySelector('.hero-cta-row .btn-ghost');
+          if (c2) c2.firstChild.nodeValue = t.ctaSecondary + ' ';
+
+          const badge = document.querySelector('.hero-badge');
+          if (badge) badge.style.display = t.showOpsimBadge ? '' : 'none';
+        }, [t]);
+
+        const { TweaksPanel, TweakSection, TweakColor, TweakToggle, TweakRadio, TweakText } = window;
+
+        return (
+          <TweaksPanel>
+            <TweakSection label="Theme" />
+            <TweakColor
+              label="Palette"
+              value={t.palette}
+              options={PALETTES}
+              onChange={(v) => setTweak('palette', v)}
+            />
+
+            <TweakSection label="Layout" />
+            <TweakToggle label="Announcement bar"   value={t.showBar}        onChange={(v) => setTweak('showBar', v)} />
+            <TweakToggle label="Hero stats row"     value={t.showStats}      onChange={(v) => setTweak('showStats', v)} />
+            <TweakToggle label="Hero pill badge"    value={t.showOpsimBadge} onChange={(v) => setTweak('showOpsimBadge', v)} />
+            <TweakRadio
+              label="Density"
+              value={t.density}
+              options={['compact', 'regular', 'spacious']}
+              onChange={(v) => setTweak('density', v)}
+            />
+
+            <TweakSection label="Hero copy" />
+            <TweakText
+              label="Headline · line 1"
+              value={t.headlineA}
+              onChange={(v) => setTweak('headlineA', v)}
+            />
+            <TweakText
+              label="Headline · line 2 (accent)"
+              value={t.headlineB}
+              onChange={(v) => setTweak('headlineB', v)}
+            />
+            <TweakText
+              label="Subhead"
+              value={t.subhead}
+              onChange={(v) => setTweak('subhead', v)}
+            />
+            <TweakText
+              label="Primary CTA"
+              value={t.ctaPrimary}
+              onChange={(v) => setTweak('ctaPrimary', v)}
+            />
+            <TweakText
+              label="Secondary CTA"
+              value={t.ctaSecondary}
+              onChange={(v) => setTweak('ctaSecondary', v)}
+            />
+          </TweaksPanel>
+        );
+      }
+
+      // Wait for tweaks-panel.jsx to attach to window before mounting
+      function mount() {
+        if (!window.TweaksPanel || !window.useTweaks) {
+          return setTimeout(mount, 30);
+        }
+        ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App />);
+      }
+      mount();
+    </script>
+  </body>
+</html>

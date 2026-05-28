@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Request a Demo — OpSimTech | See a physics-AI digital twin live in 15 min</title>
+    <meta name="description" content="Book a 15-minute live walkthrough of an OpSimTech digital twin. Pick a slot, tell us your industry, and an engineer will tailor the demo to your problem." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link" href="index.html#industries">Industries</a>
+          <a class="nav-link" href="index.html#products">Products</a>
+          <a class="nav-link" href="method.html">Method</a>
+          <a class="nav-link" href="insights.html">Insights</a>
+        </div>
+        <a class="btn-primary" href="request-demo.html" style="background: var(--teal-bright);">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#contact">Contact</a>
+        <span class="sep">/</span>
+        <span class="cur">Request a Demo</span>
+      </div>
+    </div>
+
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="sub-eyebrow">Contact · 15-minute walkthrough</div>
+        <h1 class="sub-display">
+          <span class="white">Request</span>
+          <span class="teal">A Demo</span>
+          <span class="grey">See The Twin Live</span>
+        </h1>
+        <p class="sub-sub">
+          Pick a slot, tell us your industry, and an engineer will tailor a
+          <b>15-minute live walkthrough</b> to your problem — no slide
+          deck, no marketing. Just the twin running.
+        </p>
+      </div>
+    </header>
+
+    <section class="sec first">
+      <div class="container">
+        <div class="form-page-grid">
+          <form class="form-card reveal" onsubmit="event.preventDefault(); document.getElementById('thanks').style.display='block';">
+            <div class="label">/ Demo Request</div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="f-name">Full name</label>
+                <input id="f-name" type="text" placeholder="Dr. Asma Nasir" required />
+              </div>
+              <div class="field">
+                <label for="f-email">Work email</label>
+                <input id="f-email" type="email" placeholder="you@company.com" required />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="f-org">Organization</label>
+                <input id="f-org" type="text" placeholder="Shipyard, OEM, R&amp;D lab…" required />
+              </div>
+              <div class="field">
+                <label for="f-role">Your role</label>
+                <input id="f-role" type="text" placeholder="Naval architect, Process Eng., CTO…" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="f-industry">Industry focus</label>
+              <select id="f-industry">
+                <option>Maritime · WASP</option>
+                <option>Aerodynamics</option>
+                <option>Thermal Systems</option>
+                <option>Battery Manufacturing</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="f-twin">Which twin should we show you?</label>
+              <select id="f-twin">
+                <option>OpSimNav · WASP / hull aero</option>
+                <option>OpSimBat · electrode mfg</option>
+                <option>OpSimHeat · pack thermal</option>
+                <option>Surprise me — tailor to my problem</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="f-when">Preferred time</label>
+              <select id="f-when">
+                <option>This week</option>
+                <option>Next week</option>
+                <option>Within the month</option>
+                <option>Flexible</option>
+              </select>
+            </div>
+
+            <label class="field-check">
+              <input type="checkbox" id="f-nda" />
+              <span>Send me a mutual NDA before the call — I'll share confidential project context.</span>
+            </label>
+
+            <button class="form-submit" type="submit">Book my demo →</button>
+
+            <div id="thanks" style="display:none; margin-top: 20px; padding: 16px 18px; background: var(--teal-soft); border: 1px solid var(--teal-border); border-radius: 10px; color: var(--teal); font-size: 14px;">
+              ✓ Thanks — an engineer will email you within 1 working day to confirm a slot.
+            </div>
+          </form>
+
+          <aside class="side-block reveal">
+            <h3>What to expect <span class="teal">in 15 min.</span></h3>
+            <ul class="side-list">
+              <li data-num="01">Live walkthrough of a working twin — no slides, no marketing pitch.</li>
+              <li data-num="02">We'll ask about your specific problem first, then pick a relevant deployment.</li>
+              <li data-num="03">You'll see: live PINN inference, sensor assimilation, decision support outputs.</li>
+              <li data-num="04">If it's a fit, we'll talk pilot scope. If it isn't, we'll say so honestly.</li>
+            </ul>
+
+            <div class="side-card">
+              <div class="pre">/ Who runs the call</div>
+              <p>An OpSimTech engineer who has actually shipped twins — not sales. You can ask hard technical questions and get hard technical answers.</p>
+            </div>
+
+            <div class="side-card">
+              <div class="pre">/ Response time</div>
+              <p>We confirm within one working day. If you booked &lt;48h out, an engineer picks the call up directly.</p>
+            </div>
+
+            <div class="side-card">
+              <div class="pre">/ Prefer a different path?</div>
+              <p style="margin-bottom: 12px;">Not ready for a live demo? Two other options:</p>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <a href="talk-to-engineer.html" style="color: var(--teal); font-weight: 600; font-size: 14px;">→ Talk to an engineer (open-ended)</a>
+                <a href="send-project-brief.html" style="color: var(--teal); font-weight: 600; font-size: 14px;">→ Send a written project brief</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal"><span>Physics first.</span><br /><span class="teal">AI accelerated.</span><br /><span class="grey">Decision ready.</span></h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div><h4>Products</h4><ul><li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li><li><a href="product-opsimbat.html">OpSimBat</a></li><li><a href="product-opsimheat.html">OpSimHeat</a></li></ul></div>
+          <div><h4>Approach</h4><ul><li><a href="index.html#problem">The Problem</a></li><li><a href="index.html#stack">How it works</a></li><li><a href="method.html">Method &amp; Toolkit</a></li><li><a href="insights.html">Insights</a></li></ul></div>
+          <div><h4>Contact</h4><ul><li><a href="request-demo.html" style="color: var(--teal);">Request a Demo</a></li><li><a href="talk-to-engineer.html">Talk to an Engineer</a></li><li><a href="send-project-brief.html">Send a Project Brief</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 OpSimTech. All rights reserved.</span><span>Physics-first · AI-accelerated · Decision-ready</span></div>
+      </div>
+    </footer>
+
+    <script>(function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('shown'));return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -60px 0px'});els.forEach(el=>io.observe(el));})();</script>
+  </body>
+</html>

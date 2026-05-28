@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimBat — Battery Electrode Manufacturing Digital Twin · OpSimTech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .crumb {
+        padding: 32px 0 8px;
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3);
+        display: flex; gap: 12px; align-items: center;
+      }
+      .crumb a { color: var(--text-3); transition: color 0.15s; }
+      .crumb a:hover { color: var(--teal); }
+      .crumb .sep { color: var(--text-4); }
+      .crumb .cur { color: var(--teal); }
+
+      /* ── HERO ── */
+      .sub-hero { position: relative; padding: 64px 0 88px; overflow: hidden; }
+      .sub-glow {
+        position: absolute; top: -200px; right: -200px;
+        width: 700px; height: 700px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(26, 224, 181, 0.08) 0%, transparent 65%);
+        pointer-events: none; z-index: 0;
+      }
+      .sub-hero-inner { position: relative; z-index: 1; }
+      .brand-line {
+        font-family: 'JetBrains Mono', monospace; font-size: 12px;
+        letter-spacing: 0.22em; text-transform: uppercase;
+        margin-bottom: 32px;
+        display: inline-flex; align-items: center; gap: 14px;
+      }
+      .brand-line::before { content: ''; width: 36px; height: 1px; background: var(--teal); }
+      .brand-line .parent { color: var(--text-3); }
+      .brand-line .sep { color: var(--text-4); margin: 0 8px; }
+      .brand-line .product { color: var(--teal); font-weight: 600; }
+
+      .product-name {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: clamp(72px, 11vw, 168px); line-height: 0.86;
+        letter-spacing: -0.022em;
+        margin-bottom: 32px;
+      }
+      .product-name .teal { color: var(--teal); }
+      .product-name .grey { color: var(--text-3); }
+
+      .product-tagline {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: clamp(28px, 3.8vw, 48px); line-height: 1.04;
+        letter-spacing: -0.028em;
+        color: var(--text); margin-bottom: 48px;
+        max-width: 1100px;
+      }
+      .product-tagline .teal { color: var(--teal); }
+      .product-tagline .grey { color: var(--text-3); }
+
+      .product-body {
+        display: grid; grid-template-columns: 1.4fr 1fr; gap: 96px;
+        align-items: end; margin-bottom: 64px;
+      }
+      .product-sub { font-size: 18px; color: var(--text-2); line-height: 1.5; max-width: 580px; }
+      .product-sub b { color: var(--text); font-weight: 600; }
+      .status-block { display: flex; flex-direction: column; gap: 14px; }
+      .status-block .info {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3);
+      }
+      .status-pill {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal);
+        background: var(--teal-soft); border: 1px solid var(--teal-border);
+        padding: 7px 12px; border-radius: 6px; align-self: flex-start;
+        font-weight: 600;
+      }
+      .status-pill .dot {
+        width: 7px; height: 7px; border-radius: 50%; background: var(--teal);
+        animation: pulse 2s ease-in-out infinite;
+      }
+      @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+      .sub-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 56px; padding-top: 32px; border-top: 1px solid var(--line-soft); }
+      .sub-stat .v {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: clamp(36px, 4vw, 52px); line-height: 1;
+        letter-spacing: -0.02em; color: var(--teal);
+      }
+      .sub-stat .v .unit { color: var(--text); font-size: 0.55em; font-weight: 600; margin-left: 4px; }
+      .sub-stat .l { font-size: 14px; color: var(--text-2); margin-top: 12px; line-height: 1.4; max-width: 200px; }
+
+      /* ── 3 PILLARS — large feature blocks ── */
+      .pillar-wrap {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--bg-1);
+      }
+      .pillar {
+        padding: 56px 56px 56px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 56px;
+        align-items: center;
+      }
+      .pillar:last-child { border-bottom: 0; }
+      .pillar .meta { display: flex; flex-direction: column; gap: 8px; }
+      .pillar .pnum {
+        font-family: 'JetBrains Mono', monospace; font-size: 24px;
+        color: var(--teal); letter-spacing: 0.04em;
+      }
+      .pillar .stage-lbl {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3);
+      }
+      .pillar h3 {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: clamp(32px, 4.4vw, 56px); line-height: 0.98;
+        letter-spacing: -0.032em; text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .pillar p {
+        font-size: 15.5px; color: var(--text-2); line-height: 1.55;
+        max-width: 540px;
+      }
+      .pillar-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+      .pillar-tags span {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        padding: 4px 8px; background: var(--bg-3);
+        border: 1px solid var(--line); border-radius: 4px;
+        color: var(--text-2);
+      }
+      .pillar-tags span.teal { color: var(--teal); background: var(--teal-soft); border-color: var(--teal-border); }
+      .pillar-visual {
+        aspect-ratio: 4 / 3;
+        background: var(--bg-3);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        position: relative; overflow: hidden;
+      }
+      .pillar-visual svg { width: 100%; height: 100%; display: block; }
+      .pillar-visual .corner {
+        position: absolute; bottom: 14px; left: 14px;
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+      }
+      .pillar-visual .corner-tr {
+        position: absolute; top: 14px; right: 14px;
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.14em; color: var(--teal);
+      }
+      .pillar-stats {
+        margin-top: 22px;
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+        max-width: 480px;
+      }
+      .pillar-stat {
+        background: var(--bg-2); border: 1px solid var(--line);
+        border-radius: 10px; padding: 14px 16px;
+      }
+      .pillar-stat .v {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: 22px; line-height: 1; letter-spacing: -0.025em;
+        color: var(--teal);
+      }
+      .pillar-stat .v .unit { color: var(--text-3); font-size: 0.5em; font-weight: 500; margin-left: 2px; }
+      .pillar-stat .k {
+        font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+        letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3);
+        margin-top: 6px;
+      }
+
+      /* ── METHOD CALLOUT (Battery uses physics-guided surrogates) ── */
+      .method-callout {
+        background: var(--bg-2); border: 1px solid var(--line);
+        border-radius: 16px; padding: 56px 64px;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+      }
+      .method-callout .left h2 {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: clamp(28px, 3.6vw, 44px); line-height: 1.04;
+        letter-spacing: -0.028em; text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+      .method-callout .left h2 .teal { color: var(--teal); }
+      .method-callout .left p { font-size: 15.5px; color: var(--text-2); line-height: 1.55; max-width: 480px; }
+      .method-callout .right { display: flex; flex-direction: column; gap: 14px; }
+      .method-pill-big {
+        display: inline-flex; align-items: center; gap: 10px;
+        font-family: 'JetBrains Mono', monospace; font-size: 12px;
+        letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+        padding: 12px 16px; border-radius: 8px;
+        background: var(--teal-soft); color: var(--teal);
+        border: 1px solid var(--teal-border); align-self: flex-start;
+      }
+      .method-bullets { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 12px; }
+      .method-bullets li {
+        display: grid; grid-template-columns: 18px 1fr; gap: 14px;
+        font-size: 14.5px; color: var(--text-2); line-height: 1.5;
+      }
+      .method-bullets li::before { content: '✓'; color: var(--teal); font-weight: 700; }
+
+      /* ── HOW IT WORKS — workflow ── */
+      .wf-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      }
+      .wf-step {
+        background: var(--bg-2); border: 1px solid var(--line);
+        border-radius: 14px; padding: 28px 26px 30px;
+        display: flex; flex-direction: column; gap: 12px;
+        position: relative;
+      }
+      .wf-step .num {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.16em; color: var(--teal);
+      }
+      .wf-step h4 {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: 17px; letter-spacing: -0.015em; text-transform: uppercase;
+        line-height: 1.15;
+      }
+      .wf-step p { font-size: 13.5px; color: var(--text-3); line-height: 1.5; }
+
+      /* ── PRODUCT RELATED ── */
+      .other-prods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .other-prod {
+        background: var(--bg-2); border: 1px solid var(--line);
+        border-radius: 12px; padding: 24px 26px;
+        display: flex; flex-direction: column; gap: 8px;
+        transition: border-color 0.15s, transform 0.15s;
+      }
+      .other-prod:hover { border-color: var(--teal); transform: translateY(-2px); }
+      .other-prod .lbl {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+      }
+      .other-prod h4 {
+        font-family: 'Geist', sans-serif; font-weight: 700;
+        font-size: 22px; letter-spacing: -0.025em; text-transform: uppercase;
+      }
+      .other-prod h4 .teal { color: var(--teal); }
+      .other-prod p { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+
+      @media (max-width: 1080px) {
+        .product-body { grid-template-columns: 1fr; gap: 32px; }
+        .sub-stats { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+        .pillar { grid-template-columns: 1fr; gap: 32px; padding: 40px 32px; }
+        .method-callout { grid-template-columns: 1fr; gap: 32px; padding: 40px 32px; }
+        .wf-grid { grid-template-columns: 1fr 1fr; }
+        .other-prods { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .product-name { font-size: clamp(48px, 16vw, 100px); }
+        .sub-stats { grid-template-columns: 1fr; gap: 24px; }
+        .wf-grid { grid-template-columns: 1fr; }
+        .pillar-stats { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link" href="index.html#industries">Industries</a>
+          <a class="nav-link active" href="index.html#products">Products</a>
+          <a class="nav-link" href="index.html#method">Method</a>
+          <a class="nav-link" href="index.html#cases">Cases</a>
+        </div>
+        <a class="btn-primary" href="index.html#contact">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#products">Products</a>
+        <span class="sep">/</span>
+        <span class="cur">OpSimBat</span>
+      </div>
+    </div>
+
+    <!-- ─── HERO ─── -->
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="brand-line">
+          <span class="parent">OpSimTech</span>
+          <span class="sep">·</span>
+          <span class="product">OpSimBat</span>
+        </div>
+
+        <h1 class="product-name">
+          OpSim<span class="teal">Bat</span>
+        </h1>
+
+        <h2 class="product-tagline">
+          The Physics-AI <span class="teal">Layer For</span><br />
+          <span class="grey">Battery Electrode Manufacturing.</span>
+        </h2>
+
+        <div class="product-body">
+          <p class="product-sub">
+            <b>End-to-end digital twin</b> for battery electrode manufacturing.
+            SPH-based slurry rheology, wet-film &amp; drying dynamics, and
+            mechanical compaction physics — across <b>all three stages</b> of
+            electrode production. Real-time process control built on top.
+          </p>
+          <div class="status-block">
+            <span class="info">/ Status</span>
+            <span class="status-pill"><span class="dot"></span>In development · Pilot 2026</span>
+            <p style="font-size: 14.5px; color: var(--text-3); line-height: 1.55; max-width: 320px; margin-top: 8px;">
+              In pilot deployment with a tier-1 gigafactory.
+              Production rollout planned for Q4 2026.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+              <a class="btn-primary arrow" href="index.html#contact">Request a Demo </a>
+              <a class="btn-ghost arrow" href="#method">See our method </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="sub-stats">
+          <div class="sub-stat">
+            <div class="v">−34<span class="unit">%</span></div>
+            <div class="l">Electrode defect rate · pilot fleet</div>
+          </div>
+          <div class="sub-stat">
+            <div class="v">+7.5<span class="unit">%</span></div>
+            <div class="l">Line uptime · post-deployment</div>
+          </div>
+          <div class="sub-stat">
+            <div class="v">3<span class="unit"></span></div>
+            <div class="l">Stages covered · mix · coat · cal.</div>
+          </div>
+          <div class="sub-stat">
+            <div class="v">5<span class="unit">Hz</span></div>
+            <div class="l">Real-time twin update rate</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ─── 3 PILLARS ─── -->
+    <section class="sec first">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 01 — Pillars</span>
+          </div>
+          <div>
+            <h2>One twin. <span class="teal">Three stages.</span></h2>
+            <p class="lead">
+              Mixing, coating, calendering — every step has a multiphysics
+              signature. We model each stage with the right Physics-AI
+              method, then chain them into a single digital twin of the line.
+            </p>
+          </div>
+        </div>
+
+        <div class="pillar-wrap reveal">
+          <!-- PILLAR 1: MIXING -->
+          <div class="pillar">
+            <div class="meta">
+              <span class="pnum">/ 01</span>
+              <span class="stage-lbl">Stage 01 · Slurry preparation</span>
+              <h3>Mixing</h3>
+              <p>
+                SPH-based slurry mixing twin. Electrode paste rheology,
+                particle dispersion, dead-zone detection. Real-time process
+                monitoring catches mixing failures before they hit the
+                coating head.
+              </p>
+              <div class="pillar-tags">
+                <span class="teal">SPH</span>
+                <span class="teal">DEM</span>
+                <span>Rheology</span>
+                <span>Dead-zone</span>
+              </div>
+              <div class="pillar-stats">
+                <div class="pillar-stat">
+                  <div class="v">1L → 10<span class="unit">m³</span></div>
+                  <div class="k">Tank scales</div>
+                </div>
+                <div class="pillar-stat">
+                  <div class="v">±2.4<span class="unit">%</span></div>
+                  <div class="k">Uniformity vs spec</div>
+                </div>
+              </div>
+            </div>
+            <div class="pillar-visual">
+              <span class="corner">SPH mixing · cathode slurry</span>
+              <span class="corner-tr">P01 · MIX</span>
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                <!-- tank outline -->
+                <path d="M 100 80 L 100 220 Q 100 245, 200 245 Q 300 245, 300 220 L 300 80" fill="none" stroke="#1ae0b5" stroke-width="1.5" opacity="0.7" />
+                <ellipse cx="200" cy="80" rx="100" ry="14" fill="none" stroke="#1ae0b5" stroke-width="1.5" opacity="0.7" />
+                <ellipse cx="200" cy="100" rx="98" ry="13" fill="#1ae0b5" opacity="0.08" />
+                <!-- impeller -->
+                <line x1="200" y1="50" x2="200" y2="195" stroke="#1ae0b5" stroke-width="2.6" />
+                <ellipse cx="200" cy="195" rx="42" ry="6" fill="#1ae0b5" opacity="0.9" />
+                <ellipse cx="200" cy="195" rx="42" ry="3" fill="#1ae0b5" />
+                <!-- particles -->
+                <g fill="#1ae0b5" opacity="0.8">
+                  <circle cx="130" cy="130" r="2.6" />
+                  <circle cx="160" cy="155" r="2.2" />
+                  <circle cx="240" cy="140" r="2.4" />
+                  <circle cx="265" cy="170" r="2.0" />
+                  <circle cx="180" cy="165" r="1.7" />
+                  <circle cx="220" cy="210" r="2.2" />
+                  <circle cx="155" cy="205" r="2.0" />
+                  <circle cx="250" cy="205" r="1.9" />
+                  <circle cx="140" cy="178" r="1.5" />
+                  <circle cx="275" cy="130" r="1.5" />
+                  <circle cx="125" cy="180" r="1.4" />
+                  <circle cx="285" cy="195" r="1.7" />
+                </g>
+                <!-- flow arrows -->
+                <g stroke="#1ae0b5" stroke-width="1" fill="none" opacity="0.5">
+                  <path d="M 130 140 Q 145 110, 175 130" />
+                  <path d="M 270 140 Q 255 110, 225 130" />
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- PILLAR 2: COATING -->
+          <div class="pillar">
+            <div class="meta">
+              <span class="pnum">/ 02</span>
+              <span class="stage-lbl">Stage 02 · Thin-film deposition</span>
+              <h3>Coating</h3>
+              <p>
+                Slot-die thin-film coating twin. Wet-film uniformity, drying
+                front dynamics, edge effects, and defect-formation prediction.
+                Catch streaks, pinholes, and edge bead issues before the line
+                degrades quality.
+              </p>
+              <div class="pillar-tags">
+                <span class="teal">PINNs · drying</span>
+                <span class="teal">Physics-guided ML</span>
+                <span>Slot-die</span>
+                <span>Defect map</span>
+              </div>
+              <div class="pillar-stats">
+                <div class="pillar-stat">
+                  <div class="v">±3<span class="unit">μm</span></div>
+                  <div class="k">Film thickness target</div>
+                </div>
+                <div class="pillar-stat">
+                  <div class="v">&lt; 50<span class="unit">ms</span></div>
+                  <div class="k">Defect-map latency</div>
+                </div>
+              </div>
+            </div>
+            <div class="pillar-visual">
+              <span class="corner">Slot-die · wet film + drying</span>
+              <span class="corner-tr">P02 · COAT</span>
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                <!-- rollers -->
+                <circle cx="80" cy="180" r="40" fill="none" stroke="#1ae0b5" stroke-width="1.5" opacity="0.6" />
+                <circle cx="80" cy="180" r="36" fill="none" stroke="#1ae0b5" stroke-width="0.8" opacity="0.4" />
+                <circle cx="320" cy="180" r="40" fill="none" stroke="#1ae0b5" stroke-width="1.5" opacity="0.6" />
+                <circle cx="320" cy="180" r="36" fill="none" stroke="#1ae0b5" stroke-width="0.8" opacity="0.4" />
+                <!-- substrate -->
+                <line x1="80" y1="220" x2="320" y2="220" stroke="#a8b0bc" stroke-width="3" />
+                <!-- wet film -->
+                <rect x="120" y="208" width="180" height="12" fill="#1ae0b5" opacity="0.5" />
+                <rect x="120" y="208" width="180" height="2" fill="#1ae0b5" opacity="0.9" />
+                <!-- defects (dots) -->
+                <circle cx="170" cy="214" r="1.8" fill="#ff6b00" />
+                <circle cx="240" cy="214" r="1.6" fill="#ff6b00" />
+                <!-- slot die head -->
+                <path d="M 175 110 L 225 110 L 215 175 L 185 175 Z" fill="none" stroke="#1ae0b5" stroke-width="1.5" opacity="0.85" />
+                <line x1="200" y1="175" x2="200" y2="208" stroke="#1ae0b5" stroke-width="2.4" />
+                <!-- drying arrows above film -->
+                <g stroke="#1ae0b5" stroke-width="1" fill="none" opacity="0.55">
+                  <path d="M 130 90 L 130 70 M 127 76 L 130 70 L 133 76" />
+                  <path d="M 160 80 L 160 60 M 157 66 L 160 60 L 163 66" />
+                  <path d="M 260 80 L 260 60 M 257 66 L 260 60 L 263 66" />
+                  <path d="M 290 90 L 290 70 M 287 76 L 290 70 L 293 76" />
+                </g>
+                <text x="200" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.4">DRYING</text>
+                <text x="80" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.4">UNWIND</text>
+                <text x="320" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.4">REWIND</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- PILLAR 3: CALENDERING -->
+          <div class="pillar">
+            <div class="meta">
+              <span class="pnum">/ 03</span>
+              <span class="stage-lbl">Stage 03 · Mechanical compaction</span>
+              <h3>Calendering</h3>
+              <p>
+                Mechanical compaction twin. Porosity control, density
+                uniformity, crack and delamination prediction. The twin
+                predicts how each set of roll-gap conditions translates into
+                cell-level cycle performance downstream.
+              </p>
+              <div class="pillar-tags">
+                <span class="teal">FEM + ML</span>
+                <span class="teal">DEM coupling</span>
+                <span>Porosity</span>
+                <span>Crack prediction</span>
+              </div>
+              <div class="pillar-stats">
+                <div class="pillar-stat">
+                  <div class="v">±0.5<span class="unit">% porosity</span></div>
+                  <div class="k">Targeted control</div>
+                </div>
+                <div class="pillar-stat">
+                  <div class="v">+12<span class="unit">%</span></div>
+                  <div class="k">Cycle life · downstream</div>
+                </div>
+              </div>
+            </div>
+            <div class="pillar-visual">
+              <span class="corner">Calendering rolls · porosity field</span>
+              <span class="corner-tr">P03 · CAL.</span>
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                <!-- upper roll -->
+                <circle cx="200" cy="100" r="55" fill="none" stroke="#1ae0b5" stroke-width="2" opacity="0.7" />
+                <circle cx="200" cy="100" r="50" fill="none" stroke="#1ae0b5" stroke-width="1" opacity="0.4" />
+                <circle cx="200" cy="100" r="5" fill="#1ae0b5" opacity="0.6" />
+                <!-- lower roll -->
+                <circle cx="200" cy="220" r="55" fill="none" stroke="#1ae0b5" stroke-width="2" opacity="0.7" />
+                <circle cx="200" cy="220" r="50" fill="none" stroke="#1ae0b5" stroke-width="1" opacity="0.4" />
+                <circle cx="200" cy="220" r="5" fill="#1ae0b5" opacity="0.6" />
+                <!-- electrode passing through -->
+                <rect x="40" y="155" width="320" height="10" fill="#1ae0b5" opacity="0.4" />
+                <rect x="40" y="158" width="320" height="4" fill="#1ae0b5" opacity="0.9" />
+                <!-- compaction arrows -->
+                <g stroke="#1ae0b5" stroke-width="1.2" fill="none" opacity="0.7">
+                  <path d="M 170 145 L 170 155 M 167 152 L 170 155 L 173 152" />
+                  <path d="M 200 145 L 200 155 M 197 152 L 200 155 L 203 152" />
+                  <path d="M 230 145 L 230 155 M 227 152 L 230 155 L 233 152" />
+                  <path d="M 170 175 L 170 165 M 167 168 L 170 165 L 173 168" />
+                  <path d="M 200 175 L 200 165 M 197 168 L 200 165 L 203 168" />
+                  <path d="M 230 175 L 230 165 M 227 168 L 230 165 L 233 168" />
+                </g>
+                <text x="60" y="160" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.2">IN</text>
+                <text x="340" y="160" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.2">OUT</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── HOW IT WORKS ─── -->
+    <section class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 02 — How it works</span>
+          </div>
+          <div>
+            <h2>From CAD &amp; sensors to live process control.</h2>
+            <p class="lead">
+              Four steps. The twin plugs into your existing line and your
+              existing CMS — no new HPC, no new operators required.
+            </p>
+          </div>
+        </div>
+
+        <div class="wf-grid reveal">
+          <div class="wf-step">
+            <span class="num">/ 01</span>
+            <h4>Capture</h4>
+            <p>Ingest line CAD, raw-material specs, and sensor telemetry from mixers, coating heads, and calenders.</p>
+          </div>
+          <div class="wf-step">
+            <span class="num">/ 02</span>
+            <h4>Model</h4>
+            <p>SPH/DEM for mixing &amp; granular flow, drying PINNs for coating, FEM-coupled ML for calendering compaction.</p>
+          </div>
+          <div class="wf-step">
+            <span class="num">/ 03</span>
+            <h4>Deploy</h4>
+            <p>Twin runs at 5 Hz on the line PLC bus. SCADA-compatible. Predictions exposed via REST and a Python SDK.</p>
+          </div>
+          <div class="wf-step">
+            <span class="num">/ 04</span>
+            <h4>Control</h4>
+            <p>Real-time recommendations: impeller speed, line speed, drying-zone temps, roll-gap setpoints — physics-grounded.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── METHOD ─── -->
+    <section id="method" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 03 — Method</span>
+          </div>
+          <div>
+            <h2>Why <span class="teal">physics-guided surrogates</span> for battery mfg.</h2>
+            <p class="lead">
+              At full 3D + time, electrode-mixing physics is too expensive
+              for pure PINNs. We use physics-guided ML surrogates — with
+              constraints embedded in architecture and loss — so the model
+              is fast enough to run line-rate and faithful to the physics
+              underneath.
+            </p>
+          </div>
+        </div>
+
+        <div class="method-callout reveal">
+          <div class="left">
+            <h2>Honest about <span class="teal">tractability.</span></h2>
+            <p>
+              Full PINN training on 3D transient electrode flow is currently
+              intractable at production scale. We get the same physical
+              consistency by embedding mass / momentum / energy constraints
+              directly into the architecture of a faster surrogate model —
+              and we validate against high-fidelity SPH/DEM ground truth.
+            </p>
+          </div>
+          <div class="right">
+            <span class="method-pill-big">Primary method · Physics-Guided Surrogates</span>
+            <ul class="method-bullets">
+              <li>Mass &amp; momentum conservation baked into network architecture</li>
+              <li>Loss includes physics-residual terms where tractable</li>
+              <li>SPH / DEM serve as offline validators &amp; trainers</li>
+              <li>5 Hz inference on commodity edge hardware</li>
+              <li>Uncertainty-quantified outputs — calibrated error bars</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── RELATED PRODUCTS ─── -->
+    <section class="sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 04 — Sister products</span>
+          </div>
+          <div>
+            <h2>Other <span class="teal">OpSim</span> products.</h2>
+          </div>
+        </div>
+
+        <div class="other-prods">
+          <a class="other-prod" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">
+            <span class="lbl">/ Maritime · Beta · Live</span>
+            <h4>OpSim<span class="teal">Nav</span></h4>
+            <p>WASP &amp; decarbonization decision intelligence for maritime. FuelEU &amp; EU ETS compliance built in. Visit opsimnav.com ↗</p>
+          </a>
+          <a class="other-prod" href="product-opsimheat.html">
+            <span class="lbl">/ Thermal · In development</span>
+            <h4>OpSim<span class="teal">Heat</span></h4>
+            <p>Cross-sector thermal digital twin. Battery packs, heat exchangers, process thermal systems — one twin, three regimes.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CTA ─── -->
+    <section class="sec compact">
+      <div class="container">
+        <div class="reveal">
+          <span class="mono mono-line" style="margin-bottom: 28px; display: inline-flex;">/ 05 — Get in touch</span>
+          <h2 style="font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(36px, 5.4vw, 80px); line-height: 0.92; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 36px;">
+            <span>Ready for a</span><br />
+            <span style="color: var(--teal);">smarter electrode line?</span><br />
+            <span style="color: var(--text-3);">Let's pilot together.</span>
+          </h2>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a class="btn-primary arrow" href="index.html#contact">Request a Demo </a>
+            <a class="btn-ghost arrow" href="mailto:engineering@opsimtech.com">Email an engineer </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal">
+          <span>Physics first.</span><br />
+          <span class="teal">AI accelerated.</span><br />
+          <span class="grey">Decision ready.</span>
+        </h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div>
+            <h4>Products</h4>
+            <ul>
+              <li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li>
+              <li><a href="product-opsimbat.html" style="color: var(--teal);">OpSimBat · Battery Mfg</a></li>
+              <li><a href="product-opsimheat.html">OpSimHeat · Thermal</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Industries</h4>
+            <ul>
+              <li><a href="industry-aerodynamics.html">Aerodynamics</a></li>
+              <li><a href="industry-maritime-wasp.html">Maritime · WASP</a></li>
+              <li><a href="industry-thermal-systems.html">Thermal Systems</a></li>
+              <li><a href="industry-battery-manufacturing.html">Battery Mfg.</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Approach</h4>
+            <ul>
+              <li><a href="index.html#problem">The Problem</a></li>
+              <li><a href="index.html#stack">How it works</a></li>
+              <li><a href="index.html#method">Method Selection</a></li>
+              <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2026 OpSimTech. All rights reserved.</span>
+          <span>Physics-first · AI-accelerated · Decision-ready</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('shown')); return; }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } });
+        }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+        els.forEach(el => io.observe(el));
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimHeat — Industrial Thermal Digital Twin · OpSimTech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .crumb { padding: 32px 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); display: flex; gap: 12px; align-items: center; }
+      .crumb a { color: var(--text-3); transition: color 0.15s; }
+      .crumb a:hover { color: var(--teal); }
+      .crumb .sep { color: var(--text-4); }
+      .crumb .cur { color: var(--teal); }
+      .sub-hero { position: relative; padding: 56px 0 88px; overflow: hidden; }
+      .sub-glow { position: absolute; top: -200px; right: -200px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(26, 224, 181, 0.08) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+      .sub-hero-inner { position: relative; z-index: 1; }
+      .brand-line { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 32px; display: inline-flex; align-items: center; gap: 14px; }
+      .brand-line::before { content: ''; width: 36px; height: 1px; background: var(--teal); }
+      .brand-line .parent { color: var(--text-3); }
+      .brand-line .sep { color: var(--text-4); margin: 0 8px; }
+      .brand-line .product { color: var(--teal); font-weight: 600; }
+      .product-name { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(72px, 11vw, 168px); line-height: 0.86; letter-spacing: -0.022em; margin-bottom: 32px; }
+      .product-name .teal { color: var(--teal); }
+      .product-tagline { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(28px, 3.8vw, 48px); line-height: 1.04; letter-spacing: -0.028em; color: var(--text); margin-bottom: 48px; max-width: 1100px; }
+      .product-tagline .teal { color: var(--teal); }
+      .product-tagline .grey { color: var(--text-3); }
+      .product-body { display: grid; grid-template-columns: 1.4fr 1fr; gap: 96px; align-items: end; margin-bottom: 64px; }
+      .product-sub { font-size: 18px; color: var(--text-2); line-height: 1.5; max-width: 580px; }
+      .product-sub b { color: var(--text); font-weight: 600; }
+      .status-block { display: flex; flex-direction: column; gap: 14px; }
+      .status-block .info { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+      .status-pill { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); background: var(--teal-soft); border: 1px solid var(--teal-border); padding: 7px 12px; border-radius: 6px; align-self: flex-start; font-weight: 600; }
+      .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: pulse 2s ease-in-out infinite; }
+      @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+      .pillar-wrap { border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: var(--bg-1); }
+      .pillar { padding: 48px 56px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 80px 1fr 1.2fr; gap: 40px; align-items: center; }
+      .pillar:last-child { border-bottom: 0; }
+      .pillar .pnum { font-family: 'JetBrains Mono', monospace; font-size: 22px; color: var(--teal); letter-spacing: 0.04em; }
+      .pillar-text { display: flex; flex-direction: column; gap: 6px; }
+      .pillar-text .stage-lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); }
+      .pillar h3 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(28px, 3.4vw, 42px); line-height: 0.98; letter-spacing: -0.028em; text-transform: uppercase; margin-bottom: 4px; }
+      .pillar p { font-size: 14.5px; color: var(--text-2); line-height: 1.55; }
+      .pillar-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+      .pillar-tags span { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; background: var(--bg-3); border: 1px solid var(--line); border-radius: 4px; color: var(--text-2); }
+      .pillar-tags span.teal { color: var(--teal); background: var(--teal-soft); border-color: var(--teal-border); }
+
+      .method-callout { background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 56px 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+      .method-callout .left h2 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(28px, 3.6vw, 44px); line-height: 1.04; letter-spacing: -0.028em; text-transform: uppercase; margin-bottom: 20px; }
+      .method-callout .left h2 .teal { color: var(--teal); }
+      .method-callout .left p { font-size: 15.5px; color: var(--text-2); line-height: 1.55; max-width: 480px; }
+      .method-callout .right { display: flex; flex-direction: column; gap: 14px; }
+      .method-pill-big { display: inline-flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; padding: 12px 16px; border-radius: 8px; background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal-border); align-self: flex-start; }
+      .method-bullets { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 12px; }
+      .method-bullets li { display: grid; grid-template-columns: 18px 1fr; gap: 14px; font-size: 14.5px; color: var(--text-2); line-height: 1.5; }
+      .method-bullets li::before { content: '✓'; color: var(--teal); font-weight: 700; }
+
+      .other-prods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .other-prod { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s, transform 0.15s; }
+      .other-prod:hover { border-color: var(--teal); transform: translateY(-2px); }
+      .other-prod .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+      .other-prod h4 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.025em; text-transform: uppercase; }
+      .other-prod h4 .teal { color: var(--teal); }
+      .other-prod p { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+
+      @media (max-width: 1080px) {
+        .product-body { grid-template-columns: 1fr; gap: 32px; }
+        .pillar { grid-template-columns: 60px 1fr; gap: 24px; padding: 32px 28px; }
+        .pillar-text { grid-column: 2 / 3; }
+        .pillar .pillar-tags { grid-column: 2 / 3; }
+        .method-callout { grid-template-columns: 1fr; gap: 32px; padding: 40px 32px; }
+        .other-prods { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) { .product-name { font-size: clamp(48px, 16vw, 100px); } }
+    </style>
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link" href="index.html#industries">Industries</a>
+          <a class="nav-link active" href="index.html#products">Products</a>
+          <a class="nav-link" href="index.html#method">Method</a>
+          <a class="nav-link" href="index.html#cases">Cases</a>
+        </div>
+        <a class="btn-primary" href="index.html#contact">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#products">Products</a>
+        <span class="sep">/</span>
+        <span class="cur">OpSimHeat</span>
+      </div>
+    </div>
+
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="brand-line">
+          <span class="parent">OpSimTech</span>
+          <span class="sep">·</span>
+          <span class="product">OpSimHeat</span>
+        </div>
+
+        <h1 class="product-name">
+          OpSim<span class="teal">Heat</span>
+        </h1>
+
+        <h2 class="product-tagline">
+          The Physics-AI <span class="teal">Layer For</span><br />
+          <span class="grey">Industrial Thermal Systems.</span>
+        </h2>
+
+        <div class="product-body">
+          <p class="product-sub">
+            <b>Cross-sector thermal digital twin</b> — battery thermal
+            management, industrial heat exchangers, and process thermal
+            systems. One platform, three regimes. CFD + energy-conservation
+            PINNs where geometry is clean, physics-guided ML where it isn't.
+          </p>
+          <div class="status-block">
+            <span class="info">/ Status</span>
+            <span class="status-pill"><span class="dot"></span>In development · Pilot 2026</span>
+            <p style="font-size: 14.5px; color: var(--text-3); line-height: 1.55; max-width: 320px;">
+              Pre-pilot with EV OEM &amp; process-heating partner.
+              GA rollout planned for 2027.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+              <a class="btn-primary arrow" href="index.html#contact">Request a Demo </a>
+              <a class="btn-ghost arrow" href="#method">See our method </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="sec first">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ 01 — Pillars</span></div>
+          <div>
+            <h2>One twin. <span class="teal">Three thermal regimes.</span></h2>
+            <p class="lead">Each pillar uses the right method — CFD-grounded PINNs where energy conservation can be encoded, physics-guided ML where data must drive the model.</p>
+          </div>
+        </div>
+
+        <div class="pillar-wrap reveal">
+          <div class="pillar">
+            <span class="pnum">/ 01</span>
+            <div class="pillar-text">
+              <span class="stage-lbl">Pillar 01 · Energy storage</span>
+              <h3>Battery Thermal</h3>
+              <p>Cell-level heat generation, pack thermal runaway risk, and active cooling system optimization. The twin predicts where hot-spots will form before they damage cells.</p>
+              <div class="pillar-tags">
+                <span class="teal">CFD + Energy PINN</span>
+                <span class="teal">Runaway-aware</span>
+                <span>Cell · Pack</span>
+              </div>
+            </div>
+          </div>
+          <div class="pillar">
+            <span class="pnum">/ 02</span>
+            <div class="pillar-text">
+              <span class="stage-lbl">Pillar 02 · Industrial equipment</span>
+              <h3>Heat Exchangers</h3>
+              <p>Thermal-performance prediction and fouling detection across plate, shell-and-tube, and air-cooled exchangers. The twin learns from process sensors and stays current.</p>
+              <div class="pillar-tags">
+                <span class="teal">Conjugate HT</span>
+                <span class="teal">Sensor fusion</span>
+                <span>Fouling</span>
+              </div>
+            </div>
+          </div>
+          <div class="pillar">
+            <span class="pnum">/ 03</span>
+            <div class="pillar-text">
+              <span class="stage-lbl">Pillar 03 · Manufacturing</span>
+              <h3>Process Thermal</h3>
+              <p>Temperature-field prediction in manufacturing processes: drying ovens, reactors, calenders, kilns. Live state estimation from limited sensor data.</p>
+              <div class="pillar-tags">
+                <span class="teal">Physics-guided ML</span>
+                <span class="teal">State estimation</span>
+                <span>Drying · reactor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="method" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ 02 — Method</span></div>
+          <div>
+            <h2>The right method <span class="teal">per pillar.</span></h2>
+            <p class="lead">Battery and exchanger thermal regimes have clean enough geometry for CFD + energy-conservation PINNs. Process thermal lives in complex geometries — physics-guided ML wins there.</p>
+          </div>
+        </div>
+
+        <div class="method-callout reveal">
+          <div class="left">
+            <h2>One twin <span class="teal">honest about</span> what each pillar needs.</h2>
+            <p>
+              We don't force a single method across all three pillars. Battery
+              and exchanger thermal regimes are well-suited to PINNs anchored
+              by CFD. Process thermal needs physics-guided ML because
+              real-world manufacturing geometry breaks the PINN assumption set.
+            </p>
+          </div>
+          <div class="right">
+            <span class="method-pill-big">Mixed-method · Per pillar</span>
+            <ul class="method-bullets">
+              <li>Pillar 01 + 02: CFD-anchored PINNs with energy-conservation loss</li>
+              <li>Pillar 03: Physics-guided ML with sensor-data backbone</li>
+              <li>All pillars: Multifidelity coupling for online speed</li>
+              <li>Uncertainty quantification on every prediction</li>
+              <li>Validated against high-fidelity CFD reference runs</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ 03 — Sister products</span></div>
+          <div><h2>Other <span class="teal">OpSim</span> products.</h2></div>
+        </div>
+        <div class="other-prods">
+          <a class="other-prod" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">
+            <span class="lbl">/ Maritime · Beta · Live</span>
+            <h4>OpSim<span class="teal">Nav</span></h4>
+            <p>WASP &amp; decarbonization decision intelligence for maritime. FuelEU compliance built in. Visit opsimnav.com ↗</p>
+          </a>
+          <a class="other-prod" href="product-opsimbat.html">
+            <span class="lbl">/ Battery Mfg · In development</span>
+            <h4>OpSim<span class="teal">Bat</span></h4>
+            <p>End-to-end battery electrode manufacturing digital twin. Mixing, coating, calendering — one twin, line-rate inference.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec compact">
+      <div class="container">
+        <div class="reveal">
+          <span class="mono mono-line" style="margin-bottom: 28px; display: inline-flex;">/ 04 — Get in touch</span>
+          <h2 style="font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(36px, 5.4vw, 80px); line-height: 0.92; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 36px;">
+            <span>Got a thermal</span><br />
+            <span style="color: var(--teal);">decision problem?</span><br />
+            <span style="color: var(--text-3);">Let's talk.</span>
+          </h2>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a class="btn-primary arrow" href="index.html#contact">Request a Demo </a>
+            <a class="btn-ghost arrow" href="mailto:engineering@opsimtech.com">Email an engineer </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal"><span>Physics first.</span><br /><span class="teal">AI accelerated.</span><br /><span class="grey">Decision ready.</span></h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div><h4>Products</h4><ul><li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li><li><a href="product-opsimbat.html">OpSimBat · Battery Mfg</a></li><li><a href="product-opsimheat.html" style="color: var(--teal);">OpSimHeat · Thermal</a></li></ul></div>
+          <div><h4>Industries</h4><ul><li><a href="industry-aerodynamics.html">Aerodynamics</a></li><li><a href="industry-maritime-wasp.html">Maritime · WASP</a></li><li><a href="industry-thermal-systems.html">Thermal Systems</a></li><li><a href="industry-battery-manufacturing.html">Battery Mfg.</a></li></ul></div>
+          <div><h4>Approach</h4><ul><li><a href="index.html#problem">The Problem</a></li><li><a href="index.html#stack">How it works</a></li><li><a href="index.html#method">Method Selection</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 OpSimTech. All rights reserved.</span><span>Physics-first · AI-accelerated · Decision-ready</span></div>
+      </div>
+    </footer>
+
+    <script>(function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('shown'));return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -60px 0px'});els.forEach(el=>io.observe(el));})();</script>
+  </body>
+</html>

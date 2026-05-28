@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimTech — Maritime · WASP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .crumb { padding: 32px 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); display: flex; gap: 12px; align-items: center; }
+      .crumb a { color: var(--text-3); transition: color 0.15s; }
+      .crumb a:hover { color: var(--teal); }
+      .crumb .sep { color: var(--text-4); }
+      .crumb .cur { color: var(--teal); }
+      .sub-hero { position: relative; padding: 56px 0 88px; overflow: hidden; }
+      .sub-glow { position: absolute; top: -200px; right: -200px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(26, 224, 181, 0.08) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+      .sub-hero-inner { position: relative; z-index: 1; }
+      .sub-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); font-weight: 500; display: inline-flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+      .sub-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--teal); }
+      .sub-display { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(48px, 9vw, 144px); line-height: 0.86; letter-spacing: -0.022em; max-width: 1280px; margin-bottom: 48px; }
+      .sub-display .white { color: var(--text); display: block; }
+      .sub-display .teal { color: var(--teal); display: block; }
+      .sub-display .grey { color: var(--text-3); display: block; }
+      .sub-sub { font-size: 18px; color: var(--text-2); line-height: 1.5; max-width: 680px; margin-bottom: 40px; }
+      .sub-sub b { color: var(--text); font-weight: 600; }
+      .external-cta {
+        margin-top: 56px;
+        padding: 56px 64px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        position: relative; overflow: hidden;
+        display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: center;
+      }
+      .external-cta::before {
+        content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--teal);
+      }
+      .external-cta h2 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(32px, 4.4vw, 56px); line-height: 0.95; letter-spacing: -0.018em; text-transform: uppercase; margin-bottom: 20px; }
+      .external-cta h2 .teal { color: var(--teal); }
+      .external-cta p { font-size: 15.5px; color: var(--text-2); line-height: 1.55; max-width: 480px; margin-bottom: 28px; }
+      .ext-link-card {
+        background: var(--bg-3); border: 1px solid var(--line); border-radius: 14px;
+        padding: 28px 32px; display: flex; flex-direction: column; gap: 14px;
+      }
+      .ext-link-card .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); }
+      .ext-link-card .url { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-2); }
+      .ext-link-card .url::before { content: '↗ '; color: var(--teal); }
+      .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+      .feat-card { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 28px 28px 30px; }
+      .feat-card .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+      .feat-card h3 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; margin-bottom: 8px; }
+      .feat-card p { font-size: 13.5px; color: var(--text-3); line-height: 1.5; }
+      .other-inds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .other-ind { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s, transform 0.15s; }
+      .other-ind:hover { border-color: var(--teal); transform: translateY(-2px); }
+      .other-ind .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+      .other-ind h4 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; text-transform: uppercase; }
+      .other-ind p { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+      @media (max-width: 1080px) {
+        .external-cta { grid-template-columns: 1fr; gap: 32px; padding: 40px 32px; }
+        .feat-grid, .other-inds { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .sub-display { font-size: clamp(40px, 13vw, 80px); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link active" href="index.html#industries">Industries</a>
+          <a class="nav-link" href="index.html#products">Products</a>
+          <a class="nav-link" href="index.html#method">Method</a>
+          <a class="nav-link" href="index.html#cases">Cases</a>
+        </div>
+        <a class="btn-primary" href="index.html#contact">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#industries">Industries</a>
+        <span class="sep">/</span>
+        <span class="cur">Maritime · WASP</span>
+      </div>
+    </div>
+
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="sub-eyebrow">Industry / 02 · Maritime · WASP</div>
+        <h1 class="sub-display">
+          <span class="white">The Physics-AI</span>
+          <span class="teal">Layer For</span>
+          <span class="grey">Wind Propulsion</span>
+        </h1>
+        <p class="sub-sub">
+          <b>Wind-Assisted Ship Propulsion (WASP)</b> is the fastest path to
+          shipping decarbonization that doesn't require a new fuel. <b>52+
+          vessels</b> already operating WASP globally, <b>97+ on order</b>.
+          With FuelEU Maritime active since Jan 2025 and the IMO Net-Zero 2050
+          framework in force, the decision intelligence layer matters more
+          than the rotor.
+        </p>
+
+        <div class="external-cta">
+          <div>
+            <span class="mono mono-line" style="margin-bottom: 20px; display: inline-flex;">/ Visit our dedicated platform</span>
+            <h2>Maritime &amp; WASP have their own home: <span class="teal">OpSimNav.</span></h2>
+            <p>
+              Hull aerodynamics for rotor &amp; wing sails, real-time WASP
+              activation decisions, voyage-aware fuel modeling, and built-in
+              EU ETS · FuelEU · IMO compliance. The dedicated platform for
+              decarbonization decision intelligence.
+            </p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <a class="btn-primary arrow" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Open OpSimNav </a>
+              <a class="btn-ghost arrow" href="index.html#contact">Talk to engineering </a>
+            </div>
+          </div>
+          <div class="ext-link-card">
+            <span class="lbl">/ Live · Beta</span>
+            <div class="url">opsimnav.com</div>
+            <p style="font-size: 13.5px; color: var(--text-3); line-height: 1.5;">
+              22% avg fuel saving · 13,400+ CFD/WT data points · &lt; 10 ms
+              surrogate inference · 3,000+ WASP-suitable vessels modeled.
+            </p>
+            <a style="color: var(--teal); font-weight: 600; font-size: 14px;" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Explore the platform ↗</a>
+          </div>
+        </div>
+
+        <div class="feat-grid">
+          <div class="feat-card">
+            <span class="lbl">/ 01 — Aerodynamics</span>
+            <h3>Rotor &amp; Wing Sails</h3>
+            <p>CFD-grounded aerodynamic surrogates for rotor sails, rigid wing sails, and suction sails. Force prediction across the operating envelope.</p>
+          </div>
+          <div class="feat-card">
+            <span class="lbl">/ 02 — Decision Layer</span>
+            <h3>WASP Activation Engine</h3>
+            <p>When to deploy, at what angle, under what conditions. Real-time recommendations driven by weather, route, and vessel state.</p>
+          </div>
+          <div class="feat-card">
+            <span class="lbl">/ 03 — Compliance</span>
+            <h3>FuelEU · EU ETS · IMO</h3>
+            <p>Regulatory dashboards encoded as first-class twin outputs. ROI, payback, carbon-credit accounting for shipowners.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ Other industries</span></div>
+          <div><h2>Browse our <span class="teal">other verticals.</span></h2></div>
+        </div>
+        <div class="other-inds">
+          <a class="other-ind" href="industry-aerodynamics.html">
+            <span class="lbl">/ 01 · External flow</span>
+            <h4>Aerodynamics</h4>
+            <p>Airfoils, blades, ducted geometries. Design sweeps in minutes, not weeks.</p>
+          </a>
+          <a class="other-ind" href="industry-thermal-systems.html">
+            <span class="lbl">/ 03 · Heat transfer</span>
+            <h4>Thermal Systems</h4>
+            <p>Battery packs, heat exchangers, process heating.</p>
+          </a>
+          <a class="other-ind" href="industry-battery-manufacturing.html">
+            <span class="lbl">/ 04 · Process mfg</span>
+            <h4>Battery Manufacturing</h4>
+            <p>Electrode mixing, coating, calendering.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal">
+          <span>Physics first.</span><br />
+          <span class="teal">AI accelerated.</span><br />
+          <span class="grey">Decision ready.</span>
+        </h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div>
+            <h4>Products</h4>
+            <ul>
+              <li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li>
+              <li><a href="product-opsimbat.html">OpSimBat · Battery Mfg</a></li>
+              <li><a href="product-opsimheat.html">OpSimHeat · Thermal</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Industries</h4>
+            <ul>
+              <li><a href="industry-aerodynamics.html">Aerodynamics</a></li>
+              <li><a href="industry-maritime-wasp.html" style="color: var(--teal);">Maritime · WASP</a></li>
+              <li><a href="industry-thermal-systems.html">Thermal Systems</a></li>
+              <li><a href="industry-battery-manufacturing.html">Battery Mfg.</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Approach</h4>
+            <ul>
+              <li><a href="index.html#problem">The Problem</a></li>
+              <li><a href="index.html#stack">How it works</a></li>
+              <li><a href="index.html#method">Method Selection</a></li>
+              <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2026 OpSimTech. All rights reserved.</span>
+          <span>Physics-first · AI-accelerated · Decision-ready</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('shown'));return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -60px 0px'});els.forEach(el=>io.observe(el));})();
+    </script>
+  </body>
+</html>

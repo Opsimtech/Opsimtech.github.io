@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Send a Project Brief — OpSimTech | We'll scope a pilot in 5 days</title>
+    <meta name="description" content="Send OpSimTech a written project brief. We respond within 5 working days with a scoped pilot — fixed milestones, fixed price, success criteria." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link" href="index.html#industries">Industries</a>
+          <a class="nav-link" href="index.html#products">Products</a>
+          <a class="nav-link" href="method.html">Method</a>
+          <a class="nav-link" href="insights.html">Insights</a>
+        </div>
+        <a class="btn-primary" href="request-demo.html">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#contact">Contact</a>
+        <span class="sep">/</span>
+        <span class="cur">Send a Project Brief</span>
+      </div>
+    </div>
+
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="sub-eyebrow">Contact · Written project brief</div>
+        <h1 class="sub-display">
+          <span class="white">Send Us</span>
+          <span class="teal">A Project</span>
+          <span class="grey">Brief</span>
+        </h1>
+        <p class="sub-sub">
+          Drop a project brief (PDF, slide deck, or written description) and
+          we'll respond within <b>5 working days</b> with a scoped pilot —
+          fixed milestones, fixed price, fixed success criteria.
+        </p>
+      </div>
+    </header>
+
+    <section class="sec first">
+      <div class="container">
+        <div class="form-page-grid">
+          <form class="form-card reveal" onsubmit="event.preventDefault(); document.getElementById('thanks3').style.display='block';">
+            <div class="label">/ Project Brief</div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="b-name">Full name</label>
+                <input id="b-name" type="text" placeholder="Dr. Asma Nasir" required />
+              </div>
+              <div class="field">
+                <label for="b-email">Work email</label>
+                <input id="b-email" type="email" placeholder="you@company.com" required />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="b-org">Organization</label>
+                <input id="b-org" type="text" placeholder="Company name" required />
+              </div>
+              <div class="field">
+                <label for="b-industry">Industry</label>
+                <select id="b-industry">
+                  <option>Maritime · WASP</option>
+                  <option>Aerodynamics</option>
+                  <option>Thermal Systems</option>
+                  <option>Battery Manufacturing</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="b-desc">Project description</label>
+              <textarea id="b-desc" rows="5" placeholder="What you want to model, what success looks like, what data you have, what regulatory or operational constraints apply. The more concrete, the better." required></textarea>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="b-timeline">Target timeline</label>
+                <select id="b-timeline">
+                  <option>Within 3 months</option>
+                  <option>Within 6 months</option>
+                  <option>Within 12 months</option>
+                  <option>Exploratory · no fixed date</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="b-budget">Budget range (optional)</label>
+                <select id="b-budget">
+                  <option>Prefer not to say</option>
+                  <option>&lt; €50k pilot</option>
+                  <option>€50k – €200k pilot</option>
+                  <option>€200k – €500k</option>
+                  <option>€500k+</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Attach a brief (PDF · DOCX · PPT · max 25 MB)</label>
+              <label class="field-upload" for="b-file">
+                <svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span class="ftxt">Drop a file here or click to browse</span>
+                <span class="fsub">/ PDF · DOCX · PPT</span>
+                <input id="b-file" type="file" style="display:none;" accept=".pdf,.docx,.ppt,.pptx" />
+              </label>
+            </div>
+
+            <label class="field-check">
+              <input type="checkbox" id="b-nda" />
+              <span>Send me a mutual NDA before I share the full brief.</span>
+            </label>
+
+            <button class="form-submit" type="submit">Send project brief →</button>
+
+            <div id="thanks3" style="display:none; margin-top: 20px; padding: 16px 18px; background: var(--teal-soft); border: 1px solid var(--teal-border); border-radius: 10px; color: var(--teal); font-size: 14px;">
+              ✓ Received — we'll respond within 5 working days with a scoped pilot or a clear no.
+            </div>
+          </form>
+
+          <aside class="side-block reveal">
+            <h3>What we need <span class="teal">from you.</span></h3>
+            <ul class="side-list">
+              <li data-num="01">A clear problem statement — what you want to predict, optimize, or decide.</li>
+              <li data-num="02">Available data: solver outputs, sensor streams, lab measurements, CAD.</li>
+              <li data-num="03">Success criteria you'll accept — accuracy targets, latency budget, deployment surface.</li>
+              <li data-num="04">Regulatory or operational constraints we should design around.</li>
+            </ul>
+
+            <div class="side-card">
+              <div class="pre">/ How we respond</div>
+              <p>Within 5 working days. Either a scoped pilot with fixed milestones, price, and acceptance criteria — or an honest "this isn't a fit, here's who is."</p>
+            </div>
+
+            <div class="side-card">
+              <div class="pre">/ Typical pilot</div>
+              <p>8–12 weeks. One twin, one industry, one acceptance test. We deliver a working model + a written report on what it learned and where it's brittle.</p>
+            </div>
+
+            <div class="side-card">
+              <div class="pre">/ Confidentiality</div>
+              <p>We treat every brief as confidential by default. Tick the NDA box and we'll send one before reviewing in detail.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal"><span>Physics first.</span><br /><span class="teal">AI accelerated.</span><br /><span class="grey">Decision ready.</span></h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div><h4>Products</h4><ul><li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li><li><a href="product-opsimbat.html">OpSimBat</a></li><li><a href="product-opsimheat.html">OpSimHeat</a></li></ul></div>
+          <div><h4>Approach</h4><ul><li><a href="index.html#problem">The Problem</a></li><li><a href="index.html#stack">How it works</a></li><li><a href="method.html">Method &amp; Toolkit</a></li><li><a href="insights.html">Insights</a></li></ul></div>
+          <div><h4>Contact</h4><ul><li><a href="request-demo.html">Request a Demo</a></li><li><a href="talk-to-engineer.html">Talk to an Engineer</a></li><li><a href="send-project-brief.html" style="color: var(--teal);">Send a Project Brief</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 OpSimTech. All rights reserved.</span><span>Physics-first · AI-accelerated · Decision-ready</span></div>
+      </div>
+    </footer>
+
+    <script>(function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('shown'));return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -60px 0px'});els.forEach(el=>io.observe(el));})();</script>
+  </body>
+</html>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimTech — Thermal Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .crumb { padding: 32px 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); display: flex; gap: 12px; align-items: center; }
+      .crumb a { color: var(--text-3); transition: color 0.15s; }
+      .crumb a:hover { color: var(--teal); }
+      .crumb .sep { color: var(--text-4); }
+      .crumb .cur { color: var(--teal); }
+      .sub-hero { position: relative; padding: 56px 0 88px; overflow: hidden; }
+      .sub-glow { position: absolute; top: -200px; right: -200px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(26, 224, 181, 0.08) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+      .sub-hero-inner { position: relative; z-index: 1; }
+      .sub-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); font-weight: 500; display: inline-flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+      .sub-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--teal); }
+      .sub-display { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(48px, 9vw, 144px); line-height: 0.86; letter-spacing: -0.022em; max-width: 1280px; margin-bottom: 48px; }
+      .sub-display .white { color: var(--text); display: block; }
+      .sub-display .teal { color: var(--teal); display: block; }
+      .sub-display .grey { color: var(--text-3); display: block; }
+      .sub-sub { font-size: 18px; color: var(--text-2); line-height: 1.5; max-width: 680px; margin-bottom: 40px; }
+      .sub-sub b { color: var(--text); font-weight: 600; }
+      .sub-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+      .uc-list { display: flex; flex-direction: column; }
+      .uc-row { display: grid; grid-template-columns: 80px 1fr 1.4fr; gap: 40px; padding: 40px 0; border-top: 1px solid var(--line); align-items: start; }
+      .uc-row:last-child { border-bottom: 1px solid var(--line); }
+      .uc-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.16em; color: var(--text-3); padding-top: 6px; }
+      .uc-title { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(24px, 3vw, 36px); line-height: 1.05; letter-spacing: -0.025em; }
+      .uc-body { display: flex; flex-direction: column; gap: 12px; }
+      .uc-body p { font-size: 15.5px; color: var(--text-2); line-height: 1.55; max-width: 620px; }
+      .uc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+      .uc-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; background: var(--bg-3); border: 1px solid var(--line); border-radius: 4px; color: var(--text-2); }
+      .uc-tag.teal { color: var(--teal); border-color: var(--teal-border); background: var(--teal-soft); }
+      .prod-link {
+        margin-top: 48px;
+        background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px;
+        padding: 40px 48px;
+        display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center;
+      }
+      .prod-link h3 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(22px, 2.6vw, 32px); letter-spacing: -0.025em; text-transform: uppercase; margin-bottom: 12px; }
+      .prod-link h3 .teal { color: var(--teal); }
+      .prod-link p { font-size: 14.5px; color: var(--text-3); line-height: 1.55; max-width: 540px; }
+      .other-inds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .other-ind { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s, transform 0.15s; }
+      .other-ind:hover { border-color: var(--teal); transform: translateY(-2px); }
+      .other-ind .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+      .other-ind h4 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; text-transform: uppercase; }
+      .other-ind p { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+      @media (max-width: 1080px) {
+        .uc-row { grid-template-columns: 60px 1fr; gap: 24px; }
+        .uc-row .uc-body { grid-column: 2 / 3; }
+        .prod-link { grid-template-columns: 1fr; gap: 24px; padding: 32px 28px; }
+        .other-inds { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) { .sub-display { font-size: clamp(40px, 13vw, 80px); } }
+    </style>
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link active" href="index.html#industries">Industries</a>
+          <a class="nav-link" href="index.html#products">Products</a>
+          <a class="nav-link" href="index.html#method">Method</a>
+          <a class="nav-link" href="index.html#cases">Cases</a>
+        </div>
+        <a class="btn-primary" href="index.html#contact">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#industries">Industries</a>
+        <span class="sep">/</span>
+        <span class="cur">Thermal Systems</span>
+      </div>
+    </div>
+
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="sub-eyebrow">Industry / 03 · Thermal Systems</div>
+        <h1 class="sub-display">
+          <span class="white">The Physics-AI</span>
+          <span class="teal">Layer For</span>
+          <span class="grey">Thermal Systems</span>
+        </h1>
+        <p class="sub-sub">
+          We model heat where it is mission-critical: <b>battery packs</b>,
+          <b>industrial heat exchangers</b>, and <b>process thermal systems</b>.
+          Conjugate fluid–solid coupling, transient analysis, and live
+          thermal-state estimation in one digital twin.
+        </p>
+        <div class="sub-cta">
+          <a class="btn-primary arrow" href="product-opsimheat.html">See OpSimHeat </a>
+          <a class="btn-ghost arrow" href="index.html#contact">Request a demo </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="sec first">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ 01 — Use Cases</span></div>
+          <div>
+            <h2>Three thermal regimes. One twin.</h2>
+            <p class="lead">Each regime needs the right method — high-fidelity CFD with energy-conservation PINNs where geometry is clean, physics-guided ML where it isn't.</p>
+          </div>
+        </div>
+        <div class="uc-list">
+          <div class="uc-row reveal">
+            <span class="uc-num">/ 01</span>
+            <h3 class="uc-title">Battery Thermal Management</h3>
+            <div class="uc-body">
+              <p>Cell-level heat generation, pack thermal runaway risk, cooling system optimization. Predict thermal hot-spots and cycle-life impact in real time.</p>
+              <div class="uc-tags">
+                <span class="uc-tag teal">CFD + Energy PINN</span>
+                <span class="uc-tag">Runaway-aware</span>
+                <span class="uc-tag">Pack-level</span>
+              </div>
+            </div>
+          </div>
+          <div class="uc-row reveal">
+            <span class="uc-num">/ 02</span>
+            <h3 class="uc-title">Industrial Heat Exchangers</h3>
+            <div class="uc-body">
+              <p>Thermal performance prediction, fouling detection, and operating-point optimization. The twin learns from sensor data and stays current with the asset.</p>
+              <div class="uc-tags">
+                <span class="uc-tag teal">Conjugate HT</span>
+                <span class="uc-tag">Fouling detection</span>
+                <span class="uc-tag">Plate · shell-tube</span>
+              </div>
+            </div>
+          </div>
+          <div class="uc-row reveal">
+            <span class="uc-num">/ 03</span>
+            <h3 class="uc-title">Process Thermal Systems</h3>
+            <div class="uc-body">
+              <p>Temperature-field prediction in manufacturing processes: drying ovens, reactors, calenders. Live state estimation from limited sensor data.</p>
+              <div class="uc-tags">
+                <span class="uc-tag teal">Physics-guided ML</span>
+                <span class="uc-tag">Drying</span>
+                <span class="uc-tag">Reactor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-link reveal">
+          <div>
+            <span class="mono mono-line" style="margin-bottom: 14px; display: inline-flex;">/ The product</span>
+            <h3>This vertical is powered by <span class="teal">OpSimHeat.</span></h3>
+            <p>Cross-sector thermal digital twin — battery thermal, heat exchangers, and process thermal in one platform. In development; pilot deployments through 2026.</p>
+          </div>
+          <a class="btn-primary arrow" href="product-opsimheat.html">See OpSimHeat </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ Other industries</span></div>
+          <div><h2>Browse our <span class="teal">other verticals.</span></h2></div>
+        </div>
+        <div class="other-inds">
+          <a class="other-ind" href="industry-aerodynamics.html"><span class="lbl">/ 01 · External flow</span><h4>Aerodynamics</h4><p>Airfoils, blades, ducted geometries.</p></a>
+          <a class="other-ind" href="industry-maritime-wasp.html"><span class="lbl">/ 02 · Hydrodynamics</span><h4>Maritime · WASP</h4><p>Wind-assisted propulsion, decarbonization compliance.</p></a>
+          <a class="other-ind" href="industry-battery-manufacturing.html"><span class="lbl">/ 04 · Process mfg</span><h4>Battery Manufacturing</h4><p>Electrode mixing, coating, calendering.</p></a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal"><span>Physics first.</span><br /><span class="teal">AI accelerated.</span><br /><span class="grey">Decision ready.</span></h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div><h4>Products</h4><ul><li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li><li><a href="product-opsimbat.html">OpSimBat · Battery Mfg</a></li><li><a href="product-opsimheat.html">OpSimHeat · Thermal</a></li></ul></div>
+          <div><h4>Industries</h4><ul><li><a href="industry-aerodynamics.html">Aerodynamics</a></li><li><a href="industry-maritime-wasp.html">Maritime · WASP</a></li><li><a href="industry-thermal-systems.html" style="color: var(--teal);">Thermal Systems</a></li><li><a href="industry-battery-manufacturing.html">Battery Mfg.</a></li></ul></div>
+          <div><h4>Approach</h4><ul><li><a href="index.html#problem">The Problem</a></li><li><a href="index.html#stack">How it works</a></li><li><a href="index.html#method">Method Selection</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 OpSimTech. All rights reserved.</span><span>Physics-first · AI-accelerated · Decision-ready</span></div>
+      </div>
+    </footer>
+
+    <script>(function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('shown'));return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -60px 0px'});els.forEach(el=>io.observe(el));})();</script>
+  </body>
+</html>

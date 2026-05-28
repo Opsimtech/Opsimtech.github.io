@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimTech — Battery Manufacturing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .crumb { padding: 32px 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); display: flex; gap: 12px; align-items: center; }
+      .crumb a { color: var(--text-3); transition: color 0.15s; }
+      .crumb a:hover { color: var(--teal); }
+      .crumb .sep { color: var(--text-4); }
+      .crumb .cur { color: var(--teal); }
+      .sub-hero { position: relative; padding: 56px 0 88px; overflow: hidden; }
+      .sub-glow { position: absolute; top: -200px; right: -200px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(26, 224, 181, 0.08) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+      .sub-hero-inner { position: relative; z-index: 1; }
+      .sub-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); font-weight: 500; display: inline-flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+      .sub-eyebrow::before { content: ''; width: 36px; height: 1px; background: var(--teal); }
+      .sub-display { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(48px, 9vw, 144px); line-height: 0.86; letter-spacing: -0.022em; max-width: 1280px; margin-bottom: 48px; }
+      .sub-display .white { color: var(--text); display: block; }
+      .sub-display .teal { color: var(--teal); display: block; }
+      .sub-display .grey { color: var(--text-3); display: block; }
+      .sub-sub { font-size: 18px; color: var(--text-2); line-height: 1.5; max-width: 680px; margin-bottom: 40px; }
+      .sub-sub b { color: var(--text); font-weight: 600; }
+      .sub-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+      .stages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .stage-card { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 32px 30px; display: flex; flex-direction: column; gap: 14px; transition: border-color 0.18s, transform 0.18s; }
+      .stage-card:hover { border-color: var(--teal); transform: translateY(-3px); }
+      .stage-card .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: var(--teal); }
+      .stage-card h3 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: -0.025em; text-transform: uppercase; line-height: 1.05; }
+      .stage-card p { font-size: 14px; color: var(--text-3); line-height: 1.55; }
+      .stage-card .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+      .stage-card .tags span { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; background: var(--bg-3); border: 1px solid var(--line); border-radius: 4px; color: var(--text-2); }
+      .stage-card .tags span.teal { color: var(--teal); background: var(--teal-soft); border-color: var(--teal-border); }
+      .prod-link { margin-top: 48px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 40px 48px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+      .prod-link h3 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: clamp(22px, 2.6vw, 32px); letter-spacing: -0.025em; text-transform: uppercase; margin-bottom: 12px; }
+      .prod-link h3 .teal { color: var(--teal); }
+      .prod-link p { font-size: 14.5px; color: var(--text-3); line-height: 1.55; max-width: 540px; }
+      .other-inds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .other-ind { background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px; padding: 24px 26px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s, transform 0.15s; }
+      .other-ind:hover { border-color: var(--teal); transform: translateY(-2px); }
+      .other-ind .lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+      .other-ind h4 { font-family: 'Geist', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; text-transform: uppercase; }
+      .other-ind p { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+      @media (max-width: 1080px) { .stages-grid { grid-template-columns: 1fr; } .prod-link { grid-template-columns: 1fr; gap: 24px; padding: 32px 28px; } .other-inds { grid-template-columns: 1fr; } }
+      @media (max-width: 720px) { .sub-display { font-size: clamp(40px, 13vw, 80px); } }
+    </style>
+  </head>
+  <body>
+    <div class="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="index.html"><span>OpSimTech</span></a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html#problem">Problem</a>
+          <a class="nav-link" href="index.html#stack">How it works</a>
+          <a class="nav-link active" href="index.html#industries">Industries</a>
+          <a class="nav-link" href="index.html#products">Products</a>
+          <a class="nav-link" href="index.html#method">Method</a>
+          <a class="nav-link" href="index.html#cases">Cases</a>
+        </div>
+        <a class="btn-primary" href="index.html#contact">Request Demo</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="crumb">
+        <a href="index.html">OpSimTech</a>
+        <span class="sep">/</span>
+        <a href="index.html#industries">Industries</a>
+        <span class="sep">/</span>
+        <span class="cur">Battery Manufacturing</span>
+      </div>
+    </div>
+
+    <header class="sub-hero">
+      <div class="sub-glow"></div>
+      <div class="container sub-hero-inner">
+        <div class="sub-eyebrow">Industry / 04 · Battery Manufacturing</div>
+        <h1 class="sub-display">
+          <span class="white">The Physics-AI</span>
+          <span class="teal">Layer For</span>
+          <span class="grey">Electrode Mfg.</span>
+        </h1>
+        <p class="sub-sub">
+          Every step in electrode manufacturing has a <b>multiphysics
+          signature</b> — slurry rheology, drying-front dynamics, mechanical
+          compaction. We model all three stages of electrode production in a
+          single digital twin, deployed at line rate.
+        </p>
+        <div class="sub-cta">
+          <a class="btn-primary arrow" href="product-opsimbat.html">See OpSimBat </a>
+          <a class="btn-ghost arrow" href="index.html#contact">Request a demo </a>
+        </div>
+      </div>
+    </header>
+
+    <section class="sec first">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ 01 — Three stages</span></div>
+          <div>
+            <h2>One twin. <span class="teal">Three stages.</span></h2>
+            <p class="lead">Each stage of electrode production has different physics — and needs a different Physics-AI method.</p>
+          </div>
+        </div>
+        <div class="stages-grid">
+          <div class="stage-card reveal">
+            <span class="num">/ Stage 01</span>
+            <h3>Mixing</h3>
+            <p>SPH-based slurry rheology &amp; particle dispersion. Dead-zone detection. Real-time mixing-uniformity scoring at tank scale.</p>
+            <div class="tags"><span class="teal">SPH</span><span class="teal">DEM</span><span>Rheology</span></div>
+          </div>
+          <div class="stage-card reveal">
+            <span class="num">/ Stage 02</span>
+            <h3>Coating</h3>
+            <p>Wet-film thickness uniformity, drying-front dynamics, edge effects, and defect-formation prediction at line rate.</p>
+            <div class="tags"><span class="teal">Drying PINN</span><span class="teal">Physics-guided ML</span><span>Slot-die</span></div>
+          </div>
+          <div class="stage-card reveal">
+            <span class="num">/ Stage 03</span>
+            <h3>Calendering</h3>
+            <p>Mechanical compaction physics. Porosity control, density uniformity, crack and delamination prediction.</p>
+            <div class="tags"><span class="teal">FEM + ML</span><span class="teal">DEM coupling</span><span>Porosity</span></div>
+          </div>
+        </div>
+
+        <div class="prod-link reveal">
+          <div>
+            <span class="mono mono-line" style="margin-bottom: 14px; display: inline-flex;">/ The product</span>
+            <h3>This vertical is powered by <span class="teal">OpSimBat.</span></h3>
+            <p>End-to-end battery electrode manufacturing digital twin. In pilot with a tier-1 gigafactory; production rollout Q4 2026.</p>
+          </div>
+          <a class="btn-primary arrow" href="product-opsimbat.html">See OpSimBat </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta"><span class="mono mono-line">/ Other industries</span></div>
+          <div><h2>Browse our <span class="teal">other verticals.</span></h2></div>
+        </div>
+        <div class="other-inds">
+          <a class="other-ind" href="industry-aerodynamics.html"><span class="lbl">/ 01 · External flow</span><h4>Aerodynamics</h4><p>Airfoils, blades, ducted geometries.</p></a>
+          <a class="other-ind" href="industry-maritime-wasp.html"><span class="lbl">/ 02 · Hydrodynamics</span><h4>Maritime · WASP</h4><p>Wind-assisted propulsion, decarbonization compliance.</p></a>
+          <a class="other-ind" href="industry-thermal-systems.html"><span class="lbl">/ 03 · Heat transfer</span><h4>Thermal Systems</h4><p>Battery packs, heat exchangers, process heating.</p></a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal"><span>Physics first.</span><br /><span class="teal">AI accelerated.</span><br /><span class="grey">Decision ready.</span></h2>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="index.html"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI.</p>
+            <div class="footer-tagline"><span class="o">●</span> opsimtech.com · 2026</div>
+          </div>
+          <div><h4>Products</h4><ul><li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li><li><a href="product-opsimbat.html">OpSimBat · Battery Mfg</a></li><li><a href="product-opsimheat.html">OpSimHeat · Thermal</a></li></ul></div>
+          <div><h4>Industries</h4><ul><li><a href="industry-aerodynamics.html">Aerodynamics</a></li><li><a href="industry-maritime-wasp.html">Maritime · WASP</a></li><li><a href="industry-thermal-systems.html">Thermal Systems</a></li><li><a href="industry-battery-manufacturing.html" style="color: var(--teal);">Battery Mfg.</a></li></ul></div>
+          <div><h4>Approach</h4><ul><li><a href="index.html#problem">The Problem</a></li><li><a href="index.html#stack">How it works</a></li><li><a href="index.html#method">Method Selection</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 OpSimTech. All rights reserved.</span><span>Physics-first · AI-accelerated · Decision-ready</span></div>
+      </div>
+    </footer>
+
+    <script>(function(){const els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('shown'));return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -60px 0px'});els.forEach(el=>io.observe(el));})();</script>
+  </body>
+</html>

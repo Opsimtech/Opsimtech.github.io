@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpSimTech — The Physics-AI Layer for Industrial Decisions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        padding: 88px 0 96px;
+        overflow: hidden;
+      }
+      .hero-glow {
+        position: absolute;
+        top: -240px; left: -240px;
+        width: 800px; height: 800px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(26, 224, 181, 0.10) 0%, transparent 65%);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .hero-content { position: relative; z-index: 1; }
+      .hero-eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-weight: 500;
+        display: inline-flex; align-items: center; gap: 14px;
+        margin-bottom: 48px;
+      }
+      .hero-eyebrow::before {
+        content: ''; width: 36px; height: 1px; background: var(--teal);
+      }
+      .hero-display {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: clamp(56px, 11vw, 168px);
+        line-height: 0.86;
+        letter-spacing: -0.055em;
+        text-transform: uppercase;
+        max-width: 1280px;
+        margin-bottom: 56px;
+      }
+      .hero-display .l1 { color: var(--text); }
+      .hero-display .l2 { color: var(--teal); }
+      .hero-display .l3 { color: var(--text-3); }
+      .hero-display .br { display: block; }
+      .hero-body {
+        display: grid; grid-template-columns: 1.4fr 1fr; gap: 96px;
+        align-items: end;
+      }
+      .hero-sub {
+        font-size: 18px;
+        color: var(--text-2);
+        line-height: 1.5;
+        max-width: 580px;
+      }
+      .hero-sub b { color: var(--text); font-weight: 600; }
+      .hero-cta-row {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+        flex-wrap: wrap;
+      }
+      .hero-side {
+        font-size: 14.5px;
+        color: var(--text-3);
+        line-height: 1.55;
+        max-width: 340px;
+      }
+
+      /* ── HERO STATS STRIP ── */
+      .stats-strip {
+        margin-top: 96px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 56px;
+        padding-top: 32px;
+        border-top: 1px solid var(--line-soft);
+      }
+      .stat .v {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: clamp(40px, 4.6vw, 64px);
+        line-height: 1;
+        letter-spacing: -0.04em;
+        color: var(--teal);
+      }
+      .stat .v .unit {
+        color: var(--text);
+        font-size: 0.6em;
+        font-weight: 600;
+        margin-left: 4px;
+      }
+      .stat .l {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--text-2);
+        margin-top: 14px;
+        font-weight: 400;
+        line-height: 1.4;
+        max-width: 200px;
+      }
+
+      /* ── PROBLEM ── */
+      .problem-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+      }
+      .pcard {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 44px 40px;
+        display: flex; flex-direction: column; gap: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      .pcard::before {
+        content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+        background: var(--text-4);
+      }
+      .pcard.solved::before { background: var(--teal); }
+      .pcard .pe {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--text-3); font-weight: 500;
+      }
+      .pcard.solved .pe { color: var(--teal); }
+      .pcard h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: clamp(24px, 2.6vw, 32px);
+        line-height: 1.08;
+        letter-spacing: -0.025em;
+        text-transform: uppercase;
+        max-width: 380px;
+      }
+      .pcard p { font-size: 15.5px; color: var(--text-2); line-height: 1.55; max-width: 440px; }
+      .problem-bridge {
+        margin-top: 32px;
+        padding: 36px 44px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        text-align: left;
+      }
+      .problem-bridge .pe {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--teal); font-weight: 500;
+        margin-bottom: 16px;
+        display: inline-flex; align-items: center; gap: 12px;
+      }
+      .problem-bridge .pe::before { content: ''; width: 24px; height: 1px; background: var(--teal); }
+      .problem-bridge p {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: clamp(22px, 2.6vw, 32px);
+        letter-spacing: -0.025em;
+        line-height: 1.18;
+        color: var(--text);
+        max-width: 880px;
+      }
+      .problem-bridge p .teal { color: var(--teal); }
+
+      /* ── STACK (3 layers) ── */
+      .stack-wrap {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+        background: var(--bg-1);
+      }
+      .layer {
+        padding: 44px 48px;
+        border-bottom: 1px solid var(--line);
+        position: relative;
+      }
+      .layer:last-child { border-bottom: 0; }
+      .layer-head {
+        display: grid; grid-template-columns: 80px 1fr auto; gap: 32px; align-items: center;
+        margin-bottom: 24px;
+      }
+      .layer-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 24px; font-weight: 500;
+        color: var(--teal); letter-spacing: 0.04em;
+      }
+      .layer h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: clamp(24px, 2.8vw, 36px);
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        text-transform: uppercase;
+      }
+      .layer .sub {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--text-3); margin-bottom: 6px;
+      }
+      .layer-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+      .layer-tag {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        padding: 5px 10px; border-radius: 4px; color: var(--teal);
+        background: var(--teal-soft); border: 1px solid var(--teal-border);
+      }
+      .layer-body p {
+        font-size: 15.5px; color: var(--text-2); line-height: 1.55;
+        max-width: 920px;
+      }
+
+      .branch-grid {
+        margin-top: 28px;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+      }
+      .branch {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 24px 24px 26px;
+        display: flex; flex-direction: column; gap: 10px;
+      }
+      .branch .letter {
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: 14px; color: var(--bg);
+        background: var(--teal);
+        width: 26px; height: 26px; border-radius: 5px;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 4px;
+      }
+      .branch h4 {
+        font-family: 'Inter', sans-serif; font-weight: 700;
+        font-size: 16px; letter-spacing: -0.015em;
+      }
+      .branch p { font-size: 13.5px; color: var(--text-3); line-height: 1.5; }
+      .branch .when {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--teal); margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--line);
+      }
+      .layer-foot {
+        margin-top: 24px;
+        padding: 18px 22px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--teal);
+        border-radius: 4px;
+        font-size: 14.5px; color: var(--text-2); line-height: 1.5;
+        font-weight: 500;
+      }
+      .layer-foot .pre {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--teal); margin-right: 12px;
+      }
+
+      .l3-grid {
+        margin-top: 22px;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+      }
+      .l3-cap {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 22px 22px 24px;
+        display: flex; flex-direction: column; gap: 8px;
+      }
+      .l3-cap .num {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.14em; color: var(--teal);
+      }
+      .l3-cap h4 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15.5px; letter-spacing: -0.01em; }
+      .l3-cap p { font-size: 13.5px; color: var(--text-3); line-height: 1.5; }
+
+      /* ── INDUSTRIES ── */
+      .ind-list { display: flex; flex-direction: column; }
+      .ind-row {
+        display: grid;
+        grid-template-columns: 100px 1fr 380px 80px;
+        gap: 32px;
+        padding: 36px 0;
+        border-top: 1px solid var(--line);
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        transition: padding-left 0.2s, background 0.2s;
+        position: relative;
+      }
+      .ind-row:last-child { border-bottom: 1px solid var(--line); }
+      .ind-row:hover { padding-left: 12px; background: linear-gradient(90deg, var(--teal-soft), transparent 60%); }
+      .ind-row:hover .ind-arrow { transform: translate(8px, -8px); color: var(--teal); }
+      .ind-num {
+        font-family: 'JetBrains Mono', monospace; font-size: 13px;
+        letter-spacing: 0.16em; color: var(--text-3);
+      }
+      .ind-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: clamp(28px, 3.8vw, 48px);
+        line-height: 1;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+      }
+      .ind-row:hover .ind-title { color: var(--teal); }
+      .ind-desc { font-size: 14.5px; color: var(--text-3); line-height: 1.5; }
+      .ind-arrow {
+        color: var(--text-3); justify-self: end;
+        transition: transform 0.2s, color 0.2s;
+      }
+
+      /* ── PRODUCTS ── */
+      .prod-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+      }
+      .prod-card {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex; flex-direction: column;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+      .prod-card:hover { border-color: var(--teal); transform: translateY(-4px); }
+      .prod-visual {
+        position: relative;
+        aspect-ratio: 16 / 11;
+        background: var(--bg-3);
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .prod-visual svg { width: 100%; height: 100%; display: block; }
+      .prod-visual .corner-l {
+        position: absolute; top: 14px; left: 14px;
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.14em; color: var(--text-4); text-transform: uppercase;
+      }
+      .prod-badge {
+        position: absolute; top: 14px; right: 14px;
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        padding: 4px 8px; border-radius: 4px; font-weight: 600;
+        background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal-border);
+      }
+      .prod-badge.soon { background: var(--bg-1); color: var(--text-3); border-color: var(--line); }
+      .prod-body {
+        padding: 28px 28px 30px;
+        display: flex; flex-direction: column; gap: 14px;
+        flex: 1;
+      }
+      .prod-name {
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: 28px; letter-spacing: -0.025em;
+        line-height: 1; text-transform: uppercase;
+      }
+      .prod-name .teal { color: var(--teal); }
+      .prod-tagline {
+        font-family: 'Inter', sans-serif; font-weight: 500;
+        font-size: 14px; color: var(--text);
+        line-height: 1.35;
+      }
+      .prod-pillars { display: flex; gap: 6px; flex-wrap: wrap; }
+      .prod-pillar {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+        padding: 4px 8px; background: var(--bg-3);
+        border: 1px solid var(--line); border-radius: 4px;
+        color: var(--text-2); font-weight: 500;
+      }
+      .prod-desc { font-size: 14px; color: var(--text-3); line-height: 1.55; }
+      .prod-metric {
+        margin-top: auto; padding-top: 18px;
+        border-top: 1px solid var(--line);
+        display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+      }
+      .prod-metric .v {
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: 26px; line-height: 1; letter-spacing: -0.025em;
+        color: var(--teal);
+      }
+      .prod-metric .v.white { color: var(--text); }
+      .prod-metric .v .unit { font-size: 0.55em; color: var(--text-3); font-weight: 500; margin-left: 2px; }
+      .prod-metric .k {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3);
+        text-align: right; max-width: 170px; line-height: 1.4;
+      }
+      .prod-cta {
+        margin-top: 4px;
+        display: inline-flex; align-items: center; gap: 8px;
+        color: var(--teal); font-size: 14px; font-weight: 600;
+      }
+      .prod-cta .ext {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.7;
+      }
+
+      /* ── METHOD ── */
+      .method-table {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .mrow {
+        display: grid;
+        grid-template-columns: 90px 1.3fr 1fr 1.2fr;
+        gap: 24px;
+        padding: 28px 32px;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+      }
+      .mrow:last-child { border-bottom: 0; }
+      .mrow.header {
+        background: var(--bg-2);
+        padding: 18px 32px;
+      }
+      .mrow .h-cell {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--text-3); font-weight: 500;
+      }
+      .mrow .num {
+        font-family: 'JetBrains Mono', monospace; font-size: 12px;
+        letter-spacing: 0.14em; color: var(--text-3);
+      }
+      .mrow .app {
+        font-family: 'Inter', sans-serif; font-weight: 700;
+        font-size: 16.5px; color: var(--text); letter-spacing: -0.015em;
+        line-height: 1.25;
+      }
+      .mrow .method-pill {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600;
+        padding: 6px 12px; border-radius: 5px;
+        background: var(--teal-soft); color: var(--teal);
+        border: 1px solid var(--teal-border);
+        justify-self: start;
+      }
+      .mrow .why { font-size: 14px; color: var(--text-3); line-height: 1.5; }
+      .method-tagline {
+        text-align: left;
+        margin-top: 64px;
+        max-width: 1080px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        font-size: clamp(28px, 4vw, 56px);
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        text-transform: uppercase;
+      }
+      .method-tagline .grey { color: var(--text-3); }
+      .method-tagline .teal { color: var(--teal); }
+      .method-disclaimer {
+        margin-top: 32px;
+        font-size: 14px; color: var(--text-3); line-height: 1.6;
+        padding: 18px 24px;
+        border: 1px dashed var(--line); border-radius: 10px;
+        max-width: 760px;
+      }
+      .method-disclaimer .lbl {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-right: 10px;
+      }
+
+      /* ── TOOLKIT ── */
+      .tool-cat {
+        margin-bottom: 18px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 36px 40px 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      .tool-cat::before {
+        content: ''; position: absolute;
+        left: 0; top: 0; bottom: 0; width: 3px; background: var(--teal);
+      }
+      .tool-cat-head {
+        display: flex; align-items: baseline; justify-content: space-between;
+        gap: 24px; margin-bottom: 28px;
+      }
+      .tool-cat-head h3 {
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: clamp(22px, 2.6vw, 30px); letter-spacing: -0.025em;
+        text-transform: uppercase;
+      }
+      .tool-cat-head .sub {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3);
+      }
+      .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .tool-cell {
+        background: var(--bg-3); border: 1px solid var(--line);
+        border-radius: 10px; padding: 22px 24px;
+        display: flex; flex-direction: column; gap: 10px;
+      }
+      .tool-cell .lbl {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.16em; color: var(--teal); margin-bottom: 2px;
+      }
+      .tool-cell h4 { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+      .tool-cell p { font-size: 13.5px; color: var(--text-3); line-height: 1.5; }
+
+      /* ── DECISIONS ── */
+      .dec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .dec-card {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 40px 32px;
+        display: flex; flex-direction: column; gap: 18px;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+      .dec-card:hover { border-color: var(--teal); transform: translateY(-3px); }
+      .dec-card .num {
+        font-family: 'JetBrains Mono', monospace; font-size: 13px;
+        letter-spacing: 0.18em; color: var(--teal);
+      }
+      .dec-card h3 {
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: clamp(22px, 2.4vw, 28px); letter-spacing: -0.025em;
+        text-transform: uppercase; line-height: 1.05;
+      }
+      .dec-card p { font-size: 14.5px; color: var(--text-2); line-height: 1.55; }
+      .dec-card .badges {
+        margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line);
+        display: flex; flex-wrap: wrap; gap: 6px;
+      }
+      .dec-card .badges span {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3);
+        padding: 3px 7px; background: var(--bg-3);
+        border: 1px solid var(--line); border-radius: 3px;
+      }
+
+      /* ── CASES ── */
+      .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .case-card {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 32px 30px;
+        display: flex; flex-direction: column; gap: 14px;
+        cursor: pointer;
+        transition: border-color 0.18s, transform 0.18s;
+      }
+      .case-card:hover { border-color: var(--teal); transform: translateY(-4px); }
+      .case-tag {
+        font-family: 'JetBrains Mono', monospace; font-size: 10px;
+        letter-spacing: 0.16em; text-transform: uppercase;
+        color: var(--teal); background: var(--teal-soft);
+        border: 1px solid var(--teal-border);
+        padding: 4px 8px; border-radius: 4px; align-self: flex-start;
+      }
+      .case-metric {
+        font-family: 'Inter', sans-serif; font-weight: 800;
+        font-size: clamp(40px, 4.6vw, 56px); line-height: 1;
+        letter-spacing: -0.035em; color: var(--teal); margin: 6px 0;
+        text-transform: uppercase;
+      }
+      .case-metric .unit { font-size: 0.45em; color: var(--text-3); font-weight: 500; margin-left: 4px; text-transform: lowercase; letter-spacing: 0; }
+      .case-title {
+        font-family: 'Inter', sans-serif; font-weight: 700;
+        font-size: 17px; line-height: 1.3; letter-spacing: -0.015em; color: var(--text);
+      }
+      .case-desc { font-size: 13.5px; color: var(--text-3); line-height: 1.5; }
+      .case-link {
+        margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line);
+        color: var(--teal); font-size: 14px; font-weight: 600;
+        display: inline-flex; align-items: center; gap: 8px;
+      }
+
+      /* ── CTA ── */
+      .cta-sec { padding: 128px 0 96px; }
+      .cta-display {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: clamp(48px, 7vw, 112px);
+        line-height: 0.88;
+        letter-spacing: -0.045em;
+        text-transform: uppercase;
+        margin-bottom: 48px;
+      }
+      .cta-display .teal { color: var(--teal); }
+      .cta-display .grey { color: var(--text-3); }
+      .cta-options {
+        margin-top: 56px;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      }
+      .cta-option {
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 28px 30px;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 20px;
+        transition: border-color 0.18s, transform 0.18s;
+        cursor: pointer;
+      }
+      .cta-option:hover { border-color: var(--teal); transform: translateY(-3px); }
+      .cta-option .left .title {
+        font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 700;
+        color: var(--text); letter-spacing: -0.015em; margin-bottom: 4px;
+      }
+      .cta-option .left .sub { font-size: 13.5px; color: var(--text-3); }
+      .cta-option .arrow-icon { color: var(--teal); flex-shrink: 0; }
+
+      /* ── HERO RESPONSIVE ── */
+      @media (max-width: 1080px) {
+        .hero-body { grid-template-columns: 1fr; gap: 40px; }
+        .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .ind-row { grid-template-columns: 60px 1fr 40px; padding: 28px 0; }
+        .ind-row .ind-desc { grid-column: 2 / 3; grid-row: 2; }
+        .prod-grid, .case-grid, .dec-grid { grid-template-columns: 1fr; }
+        .tool-grid { grid-template-columns: 1fr; }
+        .branch-grid, .l3-grid { grid-template-columns: 1fr; }
+        .problem-grid { grid-template-columns: 1fr; }
+        .layer { padding: 32px 28px; }
+        .layer-head { grid-template-columns: 1fr; gap: 12px; }
+        .layer-tags { margin-top: 8px; }
+        .mrow { grid-template-columns: 1fr; gap: 8px; padding: 24px 22px; }
+        .mrow.header { display: none; }
+        .mrow .method-pill { justify-self: start; }
+        .cta-options { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .hero-display { font-size: clamp(40px, 14vw, 80px); }
+        .stats-strip { grid-template-columns: 1fr; gap: 28px; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ─── ANNOUNCEMENT BAR ─── -->
+    <div class="annbar" id="annbar">
+      <div class="annbar-inner">
+        <span class="pill">● Beta</span>
+        <span class="msg"><b style="color: var(--text);">OpSimNav</b> — WASP &amp; decarbonization decision intelligence — is now live.</span>
+        <a class="link" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">Visit OpSimNav →</a>
+        <button class="close-x" aria-label="Dismiss" id="annbarClose">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── NAV ─── -->
+    <nav class="nav" aria-label="Primary">
+      <div class="nav-inner">
+        <a class="brand" href="#top">
+          <span>OpSimTech</span>
+        </a>
+        <div class="nav-links">
+          <a class="nav-link" href="#problem">Problem</a>
+          <a class="nav-link" href="#stack">How it works</a>
+          <a class="nav-link" href="#industries">Industries</a>
+          <a class="nav-link" href="#products">Products</a>
+          <a class="nav-link" href="#method">Method</a>
+          <a class="nav-link" href="#cases">Cases</a>
+        </div>
+        <a class="btn-primary" href="#contact">Request Demo</a>
+        <button class="nav-mobile" aria-label="Open menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ─── HERO ─── -->
+    <header id="top" class="hero">
+      <div class="hero-glow"></div>
+      <div class="container hero-content">
+        <div class="hero-eyebrow">Physics-AI · Industrial Decision Intelligence</div>
+
+        <h1 class="hero-display">
+          <span class="l1 br">The Physics-AI</span>
+          <span class="l2 br">Layer For</span>
+          <span class="l3 br">Industrial Decisions</span>
+        </h1>
+
+        <div class="hero-body">
+          <p class="hero-sub">
+            OpSimTech builds real-time digital twins that fuse high-fidelity
+            physics simulation with AI — delivering the <b>speed of machine
+            learning</b> with the <b>trustworthiness of engineering science.</b>
+            <br /><br />
+            For maritime, aerodynamics, thermal systems, and battery
+            manufacturing.
+          </p>
+          <div>
+            <p class="hero-side">
+              We don't preach one algorithm. We engineer the right Physics-AI
+              method for your application — PINNs where physics constraints
+              allow, surrogates where they don't.
+            </p>
+            <div class="hero-cta-row">
+              <a class="btn-primary arrow" href="#contact">Request a Demo </a>
+              <a class="btn-ghost arrow" href="#problem">Explore Our Approach </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat">
+            <div class="v">15<span class="unit">%</span></div>
+            <div class="l">Avg fuel savings · WASP fleets</div>
+          </div>
+          <div class="stat">
+            <div class="v">1000<span class="unit">×</span></div>
+            <div class="l">Faster than full CFD inference</div>
+          </div>
+          <div class="stat">
+            <div class="v">4<span class="unit"></span></div>
+            <div class="l">Industry verticals served</div>
+          </div>
+          <div class="stat">
+            <div class="v">3<span class="unit"></span></div>
+            <div class="l">Production digital twin platforms</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ─── SECTION 1: THE PROBLEM ─── -->
+    <section id="problem" class="sec first">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 01 — The Problem</span>
+          </div>
+          <div>
+            <h2>The problem with fast models. <span class="grey">And slow ones.</span></h2>
+            <p class="lead">
+              Industry has been forced to choose between two bad options. We
+              built OpSimTech because neither is good enough alone.
+            </p>
+          </div>
+        </div>
+
+        <div class="problem-grid">
+          <div class="pcard reveal">
+            <span class="pe">Fast · untrustworthy</span>
+            <h3>Pure ML is fast — but blind outside training data.</h3>
+            <p>
+              Black-box models fail silently in novel operating conditions.
+              Engineers can't act on predictions they can't explain. The
+              regulator can't accept what the model can't justify.
+            </p>
+          </div>
+          <div class="pcard reveal">
+            <span class="pe">Trusted · slow</span>
+            <h3>Full CFD is trustworthy — but it takes hours.</h3>
+            <p>
+              By the time your simulation converges, the operating window has
+              passed, the wind has shifted, the line has moved. Trust without
+              speed is a memory, not a decision.
+            </p>
+          </div>
+        </div>
+
+        <div class="problem-bridge reveal">
+          <span class="pe">The OpSimTech approach</span>
+          <p>
+            OpSimTech sits between them. <span class="teal">We encode the physics
+            so you don't have to choose</span> — and we choose the right
+            Physics-AI method for each application.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 2: HOW IT WORKS ─── -->
+    <section id="stack" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 02 — How it works</span>
+          </div>
+          <div>
+            <h2>The OpSimTech <span class="teal">Physics-AI</span> Stack.</h2>
+            <p class="lead">
+              A three-layer architecture. The ground truth is physics. The
+              acceleration layer is AI. The output is a digital twin
+              engineers can actually use.
+            </p>
+          </div>
+        </div>
+
+        <div class="stack-wrap reveal">
+          <!-- LAYER 1 -->
+          <div class="layer">
+            <div class="layer-head">
+              <div class="layer-num">L1</div>
+              <div>
+                <div class="sub">Layer 1 · The ground truth</div>
+                <h3>High-Fidelity Physics Core</h3>
+              </div>
+              <div class="layer-tags">
+                <span class="layer-tag">CFD</span>
+                <span class="layer-tag">SPH</span>
+                <span class="layer-tag">DEM</span>
+              </div>
+            </div>
+            <div class="layer-body">
+              <p>
+                Where governing equations are solved at full fidelity. Run
+                offline to build understanding, validate the AI layer, and
+                generate training data. Industrial-grade meshing, validated
+                turbulence models, full conservation laws.
+              </p>
+            </div>
+          </div>
+
+          <!-- LAYER 2 -->
+          <div class="layer">
+            <div class="layer-head">
+              <div class="layer-num">L2</div>
+              <div>
+                <div class="sub">Layer 2 · The differentiator</div>
+                <h3>Physics-AI Hybrid Layer</h3>
+              </div>
+              <div class="layer-tags">
+                <span class="layer-tag">PINNs</span>
+                <span class="layer-tag">Surrogates</span>
+                <span class="layer-tag">Validated ML</span>
+              </div>
+            </div>
+            <div class="layer-body">
+              <p>
+                The right AI approach depends on the physics, the data, and
+                the deployment constraint. Three branches — engineered to fit.
+              </p>
+            </div>
+            <div class="branch-grid">
+              <div class="branch">
+                <span class="letter">A</span>
+                <h4>PINNs</h4>
+                <p>Neural solvers trained on physics residuals. Governing equations encoded directly in the loss. No labeled data needed.</p>
+                <span class="when">When equations are known &amp; encodable</span>
+              </div>
+              <div class="branch">
+                <span class="letter">B</span>
+                <h4>Physics-Guided Surrogates</h4>
+                <p>ROM, GP, ML with physics constraints embedded in architecture or loss. Tractable where full PINNs aren't.</p>
+                <span class="when">When data exists, PINNs are intractable</span>
+              </div>
+              <div class="branch">
+                <span class="letter">C</span>
+                <h4>Data-Driven + Validation</h4>
+                <p>Sensor-rich systems where high-frequency data dominates. CFD/SPH used as offline validators, not real-time solvers.</p>
+                <span class="when">When sensor data is abundant</span>
+              </div>
+            </div>
+            <div class="layer-foot">
+              <span class="pre">/ Principle</span>
+              We choose the right AI layer for your physics — not the other way around.
+            </div>
+          </div>
+
+          <!-- LAYER 3 -->
+          <div class="layer">
+            <div class="layer-head">
+              <div class="layer-num">L3</div>
+              <div>
+                <div class="sub">Layer 3 · The output</div>
+                <h3>Real-Time Digital Twin</h3>
+              </div>
+              <div class="layer-tags">
+                <span class="layer-tag">REST · SDK</span>
+                <span class="layer-tag">Edge-ready</span>
+              </div>
+            </div>
+            <div class="layer-body">
+              <p>
+                A continuously updated model fed by live sensor data, scored
+                against multifidelity state estimates, exposed through APIs
+                and dashboards. Designers and operators query a working
+                twin — not a static report.
+              </p>
+            </div>
+            <div class="l3-grid">
+              <div class="l3-cap">
+                <span class="num">/ 01</span>
+                <h4>Live sensor assimilation</h4>
+                <p>Stream sensor signals into the twin state in real time. Kalman, Bayesian, or ML-based filters.</p>
+              </div>
+              <div class="l3-cap">
+                <span class="num">/ 02</span>
+                <h4>Multifidelity estimation</h4>
+                <p>Blend low- and high-fidelity models to balance speed and accuracy.</p>
+              </div>
+              <div class="l3-cap">
+                <span class="num">/ 03</span>
+                <h4>Decision support</h4>
+                <p>Optimization, scenario sweeps, regulatory compliance views — directly from the twin.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 3: INDUSTRIES ─── -->
+    <section id="industries" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 03 — Industries</span>
+          </div>
+          <div>
+            <h2>Where physics-AI <span class="teal">moves the needle.</span></h2>
+            <p class="lead">
+              Four verticals where decisions are too time-sensitive for full
+              simulation and too consequential for black-box ML.
+            </p>
+          </div>
+        </div>
+
+        <div class="ind-list reveal">
+          <a class="ind-row" href="Industry - Aerodynamics.html">
+            <span class="ind-num">/ 01</span>
+            <span class="ind-title">Aerodynamics</span>
+            <span class="ind-desc">Airfoil performance, drag/lift prediction, design optimization across thousands of geometries.</span>
+            <svg class="ind-arrow" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+          <a class="ind-row" href="Industry - Maritime WASP.html">
+            <span class="ind-num">/ 02</span>
+            <span class="ind-title">Maritime · WASP</span>
+            <span class="ind-desc">Wind-assisted propulsion, decarbonization compliance, fuel-saving decision intelligence.</span>
+            <svg class="ind-arrow" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+          <a class="ind-row" href="Industry - Thermal Systems.html">
+            <span class="ind-num">/ 03</span>
+            <span class="ind-title">Thermal Systems</span>
+            <span class="ind-desc">Battery packs, heat exchangers, process heating — wherever thermal management is mission-critical.</span>
+            <svg class="ind-arrow" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+          <a class="ind-row" href="Industry - Battery Manufacturing.html">
+            <span class="ind-num">/ 04</span>
+            <span class="ind-title">Battery Manufacturing</span>
+            <span class="ind-desc">Electrode mixing, coating, calendering — every step has a multiphysics signature.</span>
+            <svg class="ind-arrow" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 4: PRODUCTS ─── -->
+    <section id="products" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 04 — Products</span>
+          </div>
+          <div>
+            <h2>Three digital twins. <span class="teal">Industry-specific.</span></h2>
+            <p class="lead">
+              Each product is a domain deployment of the OpSimTech stack —
+              built for the workflow, the regulators, and the engineers of
+              its industry.
+            </p>
+          </div>
+        </div>
+
+        <div class="prod-grid">
+          <!-- OPSIMNAV → external -->
+          <a class="prod-card reveal" href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">
+            <div class="prod-visual">
+              <span class="corner-l">NAV · WASP</span>
+              <span class="prod-badge">● Beta · Live</span>
+              <svg viewBox="0 0 400 275" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="navOcean" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1ae0b5" stop-opacity="0.18" />
+                    <stop offset="100%" stop-color="#1ae0b5" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="200" x2="400" y2="200" stroke="#1ae0b5" stroke-width="0.6" opacity="0.4" stroke-dasharray="3 4" />
+                <rect x="0" y="200" width="400" height="75" fill="url(#navOcean)" />
+                <!-- hull -->
+                <path d="M 80 170 Q 180 152, 300 164 Q 335 168, 350 182 L 350 198 Q 335 205, 300 205 L 100 205 Q 70 202, 80 170 Z" fill="#1ae0b5" opacity="0.9" />
+                <!-- rotor sails -->
+                <rect x="140" y="80" width="9" height="92" rx="3" fill="#1ae0b5" />
+                <rect x="200" y="65" width="9" height="107" rx="3" fill="#1ae0b5" />
+                <rect x="260" y="85" width="9" height="87" rx="3" fill="#1ae0b5" />
+                <!-- wind streams -->
+                <g stroke="#1ae0b5" stroke-width="0.9" fill="none" opacity="0.55">
+                  <path d="M 0 60 Q 100 55, 200 60" />
+                  <path d="M 0 90 Q 100 85, 200 90" />
+                  <path d="M 0 120 Q 100 115, 200 120" />
+                </g>
+                <!-- arrows -->
+                <g stroke="#1ae0b5" fill="none" stroke-width="0.9">
+                  <path d="M 90 60 l 6 0 M 93 57 l 3 3 l -3 3" />
+                  <path d="M 90 90 l 6 0 M 93 87 l 3 3 l -3 3" />
+                  <path d="M 90 120 l 6 0 M 93 117 l 3 3 l -3 3" />
+                </g>
+              </svg>
+            </div>
+            <div class="prod-body">
+              <div class="prod-name"><span class="teal">/</span>OpSim<span class="teal">Nav</span></div>
+              <div class="prod-tagline">WASP &amp; Decarbonization Decision Intelligence for Maritime</div>
+              <div class="prod-pillars">
+                <span class="prod-pillar">Rotor sails</span>
+                <span class="prod-pillar">Wing sails</span>
+                <span class="prod-pillar">FuelEU · ETS</span>
+              </div>
+              <p class="prod-desc">
+                Real-time WASP activation engine, fuel savings predictions
+                under changing weather, and built-in EU ETS &amp; FuelEU
+                Maritime compliance dashboards.
+              </p>
+              <div class="prod-metric">
+                <span class="v">15<span class="unit">%</span></span>
+                <span class="k">avg fuel savings · FuelEU compliance built in</span>
+              </div>
+              <span class="prod-cta arrow">Visit OpSimNav <span class="ext">↗ external</span></span>
+            </div>
+          </a>
+
+          <!-- OPSIMBAT → internal -->
+          <a class="prod-card reveal" href="Product - OpSimBat.html">
+            <div class="prod-visual">
+              <span class="corner-l">BAT · electrode mfg</span>
+              <span class="prod-badge soon">In development</span>
+              <svg viewBox="0 0 400 275" preserveAspectRatio="xMidYMid slice">
+                <!-- mixing tank -->
+                <path d="M 30 90 L 30 160 Q 30 175, 75 175 Q 120 175, 120 160 L 120 90" fill="none" stroke="#1ae0b5" stroke-width="1.3" opacity="0.75" />
+                <ellipse cx="75" cy="90" rx="45" ry="7" fill="none" stroke="#1ae0b5" stroke-width="1.3" opacity="0.75" />
+                <line x1="75" y1="70" x2="75" y2="150" stroke="#1ae0b5" stroke-width="2" />
+                <ellipse cx="75" cy="150" rx="22" ry="4" fill="#1ae0b5" opacity="0.9" />
+                <!-- arrow -->
+                <path d="M 130 130 l 18 0 M 145 126 l 5 4 l -5 4" stroke="#1ae0b5" stroke-width="1.3" fill="none" />
+                <!-- coating head -->
+                <circle cx="200" cy="130" r="20" fill="none" stroke="#1ae0b5" stroke-width="1.3" opacity="0.75" />
+                <rect x="170" y="150" width="60" height="8" fill="#1ae0b5" opacity="0.7" />
+                <rect x="172" y="154" width="56" height="2" fill="#1ae0b5" opacity="0.95" />
+                <!-- arrow -->
+                <path d="M 240 130 l 18 0 M 255 126 l 5 4 l -5 4" stroke="#1ae0b5" stroke-width="1.3" fill="none" />
+                <!-- calendering -->
+                <circle cx="310" cy="115" r="14" fill="none" stroke="#1ae0b5" stroke-width="1.3" opacity="0.75" />
+                <circle cx="310" cy="145" r="14" fill="none" stroke="#1ae0b5" stroke-width="1.3" opacity="0.75" />
+                <rect x="270" y="128" width="80" height="4" fill="#1ae0b5" opacity="0.9" />
+                <text x="75" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.4">MIX</text>
+                <text x="200" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.4">COAT</text>
+                <text x="310" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.4">CAL.</text>
+              </svg>
+            </div>
+            <div class="prod-body">
+              <div class="prod-name"><span class="teal">/</span>OpSim<span class="teal">Bat</span></div>
+              <div class="prod-tagline">End-to-End Battery Electrode Manufacturing Digital Twin</div>
+              <div class="prod-pillars">
+                <span class="prod-pillar">Mixing</span>
+                <span class="prod-pillar">Coating</span>
+                <span class="prod-pillar">Calendering</span>
+              </div>
+              <p class="prod-desc">
+                SPH-based slurry rheology, wet-film &amp; drying dynamics,
+                and mechanical compaction physics — across all three stages
+                of electrode manufacturing.
+              </p>
+              <div class="prod-metric">
+                <span class="v white">Real-time</span>
+                <span class="k">process control across mix · coat · cal.</span>
+              </div>
+              <span class="prod-cta arrow">Learn More </span>
+            </div>
+          </a>
+
+          <!-- OPSIMHEAT → internal -->
+          <a class="prod-card reveal" href="Product - OpSimHeat.html">
+            <div class="prod-visual">
+              <span class="corner-l">HEAT · cross-sector</span>
+              <span class="prod-badge soon">In development</span>
+              <svg viewBox="0 0 400 275" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                  <linearGradient id="heatBg" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#1ae0b5" stop-opacity="0.4" />
+                    <stop offset="100%" stop-color="#1ae0b5" stop-opacity="0.9" />
+                  </linearGradient>
+                </defs>
+                <!-- battery pack -->
+                <g transform="translate(20, 90)">
+                  <rect x="0" y="0" width="14" height="90" rx="2" fill="url(#heatBg)" opacity="0.5" />
+                  <rect x="18" y="0" width="14" height="90" rx="2" fill="url(#heatBg)" opacity="0.8" />
+                  <rect x="36" y="0" width="14" height="90" rx="2" fill="url(#heatBg)" opacity="0.6" />
+                  <rect x="54" y="0" width="14" height="90" rx="2" fill="url(#heatBg)" opacity="0.4" />
+                  <text x="34" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.2">PACK</text>
+                </g>
+                <!-- heat exchanger -->
+                <g transform="translate(140, 90)">
+                  <rect x="0" y="10" width="80" height="6" fill="url(#heatBg)" opacity="0.5" />
+                  <rect x="0" y="22" width="80" height="6" fill="url(#heatBg)" opacity="0.7" />
+                  <rect x="0" y="34" width="80" height="6" fill="url(#heatBg)" opacity="0.9" />
+                  <rect x="0" y="46" width="80" height="6" fill="url(#heatBg)" opacity="0.7" />
+                  <rect x="0" y="58" width="80" height="6" fill="url(#heatBg)" opacity="0.5" />
+                  <text x="40" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.2">EXCHANGER</text>
+                </g>
+                <!-- process pipe -->
+                <g transform="translate(265, 90)">
+                  <rect x="0" y="22" width="100" height="28" rx="14" fill="none" stroke="#1ae0b5" stroke-width="1.4" opacity="0.75" />
+                  <ellipse cx="0" cy="36" rx="3" ry="14" fill="none" stroke="#1ae0b5" stroke-width="1.4" opacity="0.75" />
+                  <ellipse cx="100" cy="36" rx="3" ry="14" fill="none" stroke="#1ae0b5" stroke-width="1.4" opacity="0.75" />
+                  <rect x="2" y="24" width="96" height="24" rx="11" fill="url(#heatBg)" opacity="0.6" />
+                  <text x="50" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6c7480" letter-spacing="1.2">PROCESS</text>
+                </g>
+              </svg>
+            </div>
+            <div class="prod-body">
+              <div class="prod-name"><span class="teal">/</span>OpSim<span class="teal">Heat</span></div>
+              <div class="prod-tagline">Industrial Thermal Digital Twin — Across Sectors</div>
+              <div class="prod-pillars">
+                <span class="prod-pillar">Battery Thermal</span>
+                <span class="prod-pillar">Exchangers</span>
+                <span class="prod-pillar">Process</span>
+              </div>
+              <p class="prod-desc">
+                Cell-level heat generation, exchanger fouling, and
+                manufacturing-process temperature fields. One thermal twin,
+                three sectors.
+              </p>
+              <div class="prod-metric">
+                <span class="v white">Runaway-aware</span>
+                <span class="k">predict thermal risk · optimize cooling</span>
+              </div>
+              <span class="prod-cta arrow">Learn More </span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 5: METHOD SELECTION ─── -->
+    <section id="method" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 05 — Method Selection</span>
+          </div>
+          <div>
+            <h2>The right Physics-AI method for <span class="teal">every problem.</span></h2>
+            <p class="lead">
+              No single algorithm fits every application. The art is matching
+              the method to the physics, the data, and the deployment
+              constraint. Here's how we decide.
+            </p>
+          </div>
+        </div>
+
+        <div class="method-table reveal">
+          <div class="mrow header">
+            <div class="h-cell">№</div>
+            <div class="h-cell">Application type</div>
+            <div class="h-cell">Method we use</div>
+            <div class="h-cell">Why</div>
+          </div>
+          <div class="mrow">
+            <div class="num">/ 01</div>
+            <div class="app">Continuous flow fields<br /><span style="font-weight: 500; color: var(--text-3); font-size: 14px; text-transform: none; letter-spacing: 0;">aerodynamics · hydrodynamics</span></div>
+            <span class="method-pill">PINNs</span>
+            <div class="why">Governing equations fully encodable; no labeled data needed. The PDE residual is the loss.</div>
+          </div>
+          <div class="mrow">
+            <div class="num">/ 02</div>
+            <div class="app">Complex manufacturing processes<br /><span style="font-weight: 500; color: var(--text-3); font-size: 14px; text-transform: none; letter-spacing: 0;">electrode mixing · coating · calendering</span></div>
+            <span class="method-pill">Physics-Guided Surrogates · ROM / ML</span>
+            <div class="why">PINNs intractable at 3D + time; physics constraints embedded in architecture or loss instead.</div>
+          </div>
+          <div class="mrow">
+            <div class="num">/ 03</div>
+            <div class="app">Sensor-rich operational systems<br /><span style="font-weight: 500; color: var(--text-3); font-size: 14px; text-transform: none; letter-spacing: 0;">running fleets · instrumented lines</span></div>
+            <span class="method-pill">Data-Driven + Physics Validation</span>
+            <div class="why">High-frequency sensor data dominates; CFD/SPH serve as offline validators, not runtime solvers.</div>
+          </div>
+          <div class="mrow">
+            <div class="num">/ 04</div>
+            <div class="app">All applications<br /><span style="font-weight: 500; color: var(--text-3); font-size: 14px; text-transform: none; letter-spacing: 0;">cross-cutting fidelity strategy</span></div>
+            <span class="method-pill">Multifidelity Coupling</span>
+            <div class="why">Low-fidelity models online; high-fidelity used offline to train, anchor, and validate the twin.</div>
+          </div>
+        </div>
+
+        <div class="method-tagline reveal">
+          <span>We don't force every problem into a PINN.</span><br />
+          <span class="teal">We engineer the right solution</span> <span class="grey">for your physics.</span>
+        </div>
+
+        <div class="method-disclaimer reveal">
+          <span class="lbl">/ Honesty</span>
+          PINNs remain an active research area. We apply them where they are
+          proven, and use physics-guided ML where they are not. Acknowledging
+          model limits is part of our quality standard.
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 6: TOOLKIT ─── -->
+    <section id="toolkit" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 06 — Simulation Toolkit</span>
+          </div>
+          <div>
+            <h2>Our simulation toolkit.</h2>
+            <p class="lead">
+              Three coherent layers across the OpSimTech stack — from
+              first-principles solvers to system-level twin enablers.
+            </p>
+          </div>
+        </div>
+
+        <div class="tool-cat reveal">
+          <div class="tool-cat-head">
+            <h3>A · High-Fidelity Physics Solvers</h3>
+            <span class="sub">/ Foundation assets</span>
+          </div>
+          <div class="tool-grid">
+            <div class="tool-cell"><span class="lbl">/ Cap 01</span><h4>CFD</h4><p>Fluid dynamics, turbulence, heat transfer. RANS, LES, DES for steady &amp; transient flows.</p></div>
+            <div class="tool-cell"><span class="lbl">/ Cap 02</span><h4>SPH</h4><p>Smoothed particle hydrodynamics. Free-surface, slurry, mixing, multiphase.</p></div>
+            <div class="tool-cell"><span class="lbl">/ Cap 03</span><h4>DEM</h4><p>Discrete element method. Granular mechanics &amp; particle-level manufacturing.</p></div>
+          </div>
+        </div>
+
+        <div class="tool-cat reveal">
+          <div class="tool-cat-head">
+            <h3>B · Physics-AI Acceleration Layer</h3>
+            <span class="sub">/ OpSimTech IP</span>
+          </div>
+          <div class="tool-grid">
+            <div class="tool-cell"><span class="lbl">/ Cap 04</span><h4>PINNs</h4><p>Physics-residual-trained neural solvers. PDEs encoded directly in loss.</p></div>
+            <div class="tool-cell"><span class="lbl">/ Cap 05</span><h4>Physics-Guided Surrogates</h4><p>ROM, Gaussian processes, ML with physics constraints in architecture or loss.</p></div>
+            <div class="tool-cell"><span class="lbl">/ Cap 06</span><h4>Simulation-Driven Optimization</h4><p>Sweep thousands of designs against multi-objective constraints.</p></div>
+          </div>
+        </div>
+
+        <div class="tool-cat reveal">
+          <div class="tool-cat-head">
+            <h3>C · System-Level Twin Enablers</h3>
+            <span class="sub">/ The twin in production</span>
+          </div>
+          <div class="tool-grid">
+            <div class="tool-cell"><span class="lbl">/ Cap 07</span><h4>Multifidelity Modeling</h4><p>Couple low- and high-fidelity intelligently — speed where you can, accuracy where you must.</p></div>
+            <div class="tool-cell"><span class="lbl">/ Cap 08</span><h4>Real-Time Data Assimilation</h4><p>Sensor streams fused into simulation states. The twin stays current with the real asset.</p></div>
+            <div class="tool-cell"><span class="lbl">/ Cap 09</span><h4>Decision Support Engine</h4><p>Optimization &amp; scenario analysis on top of the twin. Outputs are decisions, not numbers.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 7: DECISION INTELLIGENCE ─── -->
+    <section id="decisions" class="sec">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 07 — Decision Intelligence</span>
+          </div>
+          <div>
+            <h2><span class="teal">Physics-grounded.</span> Decision-ready.</h2>
+            <p class="lead">
+              A digital twin is only useful if it produces decisions. Three
+              capabilities turn the OpSimTech stack into a decision support
+              system — not a research project.
+            </p>
+          </div>
+        </div>
+
+        <div class="dec-grid">
+          <div class="dec-card reveal">
+            <span class="num">/ 01</span>
+            <h3>Scenario Analysis</h3>
+            <p>Run thousands of what-if scenarios in seconds. Physics-consistent, probabilistically scored, ranked. No HPC queue. No waiting.</p>
+            <div class="badges"><span>Monte Carlo</span><span>Probabilistic</span><span>Real-time</span></div>
+          </div>
+          <div class="dec-card reveal">
+            <span class="num">/ 02</span>
+            <h3>Regulatory Compliance</h3>
+            <p>Built for the real world: FuelEU Maritime, EU ETS, IMO GHG targets, battery safety standards, manufacturing QC — encoded as first-class twin outputs.</p>
+            <div class="badges"><span>FuelEU</span><span>EU ETS</span><span>IMO 2050</span><span>UN 38.3</span></div>
+          </div>
+          <div class="dec-card reveal">
+            <span class="num">/ 03</span>
+            <h3>Operator Decision Support</h3>
+            <p>Not a simulation output — a recommendation. When to deploy, what to change, what the risk is. The twin tells operators what to do, with the physics underneath.</p>
+            <div class="badges"><span>Recommend</span><span>Risk-scored</span><span>Audit-ready</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 8: CASE STUDIES ─── -->
+    <section id="cases" class="sec compact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <div class="meta">
+            <span class="mono mono-line">/ 08 — Case Studies</span>
+          </div>
+          <div>
+            <h2>Real fleets. Real factories. <span class="teal">Real numbers.</span></h2>
+            <p class="lead">
+              Selected deployments where an OpSimTech digital twin replaced
+              brittle ML or slow simulation in the customer's decision loop.
+            </p>
+          </div>
+        </div>
+
+        <div class="case-grid">
+          <a href="#" class="case-card reveal">
+            <span class="case-tag">Maritime · WASP</span>
+            <div class="case-metric">15<span class="unit">% fuel</span></div>
+            <h3 class="case-title">Rotor-sail panamax retrofit — North Atlantic</h3>
+            <p class="case-desc">WASP activation engine optimized rotor deployment per leg. FuelEU pathway compliant through 2030. ETS savings ~€620k/yr per vessel.</p>
+            <span class="case-link arrow">Read case study </span>
+          </a>
+          <a href="#" class="case-card reveal">
+            <span class="case-tag">Battery · Gigafactory</span>
+            <div class="case-metric">−34<span class="unit">% defect</span></div>
+            <h3 class="case-title">NMC811 electrode slurry mixing</h3>
+            <p class="case-desc">SPH-DEM twin caught dead-zones before they reached the coating head. Yield up, scrap down, line uptime +7.5%.</p>
+            <span class="case-link arrow">Read case study </span>
+          </a>
+          <a href="#" class="case-card reveal">
+            <span class="case-tag">Thermal · EV pack</span>
+            <div class="case-metric">+18<span class="unit">% cycles</span></div>
+            <h3 class="case-title">EV battery pack cooling design</h3>
+            <p class="case-desc">PINN-driven thermal twin let designers sweep 800 cooling channel geometries in 6 hours — vs. 11 weeks of CFD.</p>
+            <span class="case-link arrow">Read case study </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION 9: CTA ─── -->
+    <section id="contact" class="cta-sec">
+      <div class="container">
+        <div class="reveal">
+          <span class="mono mono-line" style="margin-bottom: 32px; display: inline-flex;">/ 09 — Get in touch</span>
+          <h2 class="cta-display">
+            <span>Ready to build a</span><br />
+            <span class="teal">digital twin</span><br />
+            <span class="grey">engineers can trust?</span>
+          </h2>
+        </div>
+
+        <div class="cta-options">
+          <a class="cta-option reveal" href="#">
+            <div class="left">
+              <div class="title">Request a Demo</div>
+              <div class="sub">15-minute walkthrough · pick a slot</div>
+            </div>
+            <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="cta-option reveal" href="mailto:engineering@opsimtech.com">
+            <div class="left">
+              <div class="title">Talk to an Engineer</div>
+              <div class="sub">engineering@opsimtech.com</div>
+            </div>
+            <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="cta-option reveal" href="#">
+            <div class="left">
+              <div class="title">Send a Project Brief</div>
+              <div class="sub">Drop a PDF · we'll scope a pilot</div>
+            </div>
+            <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+      <div class="container">
+        <h2 class="footer-display reveal">
+          <span>Physics first.</span><br />
+          <span class="teal">AI accelerated.</span><br />
+          <span class="grey">Decision ready.</span>
+        </h2>
+
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="#top"><span>OpSimTech</span></a>
+            <p>Industrial digital twins that fuse high-fidelity physics simulation with AI. Built for the people running the factories, fleets, and labs.</p>
+            <div class="footer-tagline">
+              <span class="o">●</span> opsimtech.com · 2026
+            </div>
+            <div class="footer-social">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM8 19H5V8h3v11zM6.5 6.7c-1 0-1.7-.8-1.7-1.7s.8-1.7 1.7-1.7 1.7.8 1.7 1.7-.7 1.7-1.7 1.7zM20 19h-3v-5.6c0-3.4-4-3.1-4 0V19h-3V8h3v1.8c1.4-2.6 7-2.8 7 2.5V19z"/></svg>
+              </a>
+              <a href="mailto:contact@opsimtech.com" aria-label="Email">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+              </a>
+              <a href="https://github.com/Opsimtech" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 6 .5.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4>Products</h4>
+            <ul>
+              <li><a href="https://opsimnav.com" target="_blank" rel="noopener noreferrer">OpSimNav · WASP ↗</a></li>
+              <li><a href="Product - OpSimBat.html">OpSimBat · Battery Mfg</a></li>
+              <li><a href="Product - OpSimHeat.html">OpSimHeat · Thermal</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Industries</h4>
+            <ul>
+              <li><a href="Industry - Aerodynamics.html">Aerodynamics</a></li>
+              <li><a href="Industry - Maritime WASP.html">Maritime · WASP</a></li>
+              <li><a href="Industry - Thermal Systems.html">Thermal Systems</a></li>
+              <li><a href="Industry - Battery Manufacturing.html">Battery Mfg.</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Approach</h4>
+            <ul>
+              <li><a href="#problem">The Problem</a></li>
+              <li><a href="#stack">How it works</a></li>
+              <li><a href="#method">Method Selection</a></li>
+              <li><a href="#toolkit">Simulation Toolkit</a></li>
+              <li><a href="#decisions">Decision Intelligence</a></li>
+              <li><a href="#cases">Case Studies</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© 2026 OpSimTech. All rights reserved.</span>
+          <span>Physics-first · AI-accelerated · Decision-ready</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Reveal on scroll
+      (function () {
+        const els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(el => el.classList.add('shown'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add('shown');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+        els.forEach(el => io.observe(el));
+      })();
+
+      // Announcement bar dismiss
+      (function () {
+        const close = document.getElementById('annbarClose');
+        if (!close) return;
+        close.addEventListener('click', () => {
+          document.getElementById('annbar').style.display = 'none';
+        });
+      })();
+    </script>
+  </body>
+</html>
