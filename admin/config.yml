@@ -2,7 +2,7 @@ backend:
   name: github
     repo: Opsimtech/Opsimtech.github.io
       branch: main
-        base_url: https://WORKER_URL_PLACEHOLDER
+            base_url: https://decap-oauth.opsimtech-ai.workers.dev
 
         media_folder: uploads
 
