@@ -1,18 +1,17 @@
 backend:
   name: github
-    repo: Opsimtech/Opsimtech.github.io
-      branch: main
-            base_url: https://decap-oauth.opsimtech-ai.workers.dev
+  repo: Opsimtech/Opsimtech.github.io
+  branch: main
+  base_url: https://decap-oauth.opsimtech-ai.workers.dev
 
-        media_folder: uploads
+media_folder: uploads
 
-        collections:
-          - name: pages
-              label: Pages
-                  files:
-                        - label: Home
-                                name: home
-                                        file: index.html
-                                                fields:
-                                                          - { label: Body, name: body, widget: markdown }
-                                                          
+collections:
+  - name: pages
+    label: Pages
+    files:
+      - label: Home
+        name: home
+        file: index.html
+        fields:
+          - { label: Body, name: body, widget: markdown }
