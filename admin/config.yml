@@ -3,6 +3,7 @@ backend:
   repo: Opsimtech/Opsimtech.github.io
   branch: main
   base_url: https://decap-oauth.opsimtech-ai.workers.dev
+  site_domain: opsimtech.com
 
 media_folder: uploads
 
