@@ -6,6 +6,7 @@ backend:
   site_domain: opsimtech.com
 
 media_folder: uploads
+public_folder: /uploads
 
 collections:
   - name: pages
